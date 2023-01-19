@@ -9,7 +9,7 @@ interface Props {
 type TeamsState = Record<"letter" | "name", string | undefined>[];
 
 function teamIndexWithoutLetter(teams: TeamsState) {
-  if (teams.length < 2) return teams.length
+  if (teams.length < 2) return teams.length;
   return teams
     .map(({ letter }, idx) => ({ letter, idx }))
     .filter(({ letter }) => letter === undefined)
