@@ -1,11 +1,18 @@
-import React from 'react';
-import { initialBag } from './features/bag';
+import React, { useState } from "react";
+import FirstPlayerDraw from "./features/FirstPlayerDraw/FirstPlayerDraw";
 
 function App() {
-  return (
-    <div className="text-2xl">
-     {initialBag().length}
-    </div>
+  const [step, setStep] = useState("draw");
+  const [players, setPlayers] = useState<string[]>([]);
+  return step === "draw" ? (
+    <FirstPlayerDraw
+      onAllPlayersSorted={(sortedPlayers) => {
+        setStep("play");
+        setPlayers(sortedPlayers);
+      }}
+    />
+  ) : (
+    <pre>{JSON.stringify(players)}</pre>
   );
 }
 
