@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { Bag } from "../bag";
 
 interface Props {
   anonymizedName: string;
