@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 interface Props {
   anonymizedName: string;
-  defaultName?: string
+  defaultName?: string;
   draw: () => string;
   onCreated: (teamName: string, letter: string) => void;
 }
@@ -17,7 +17,7 @@ function CreateTeam({ anonymizedName, defaultName, draw, onCreated }: Props) {
       <form>
         <p>{anonymizedName}, quel est votre nom ?</p>
         <input ref={inputRef} />
-        <button type="submit" onClick={() => setName(inputRef.current?.value)}>
+        <button onClick={() => setName(inputRef.current?.value)}>
           Enregistrer
         </button>
       </form>
@@ -36,7 +36,7 @@ function CreateTeam({ anonymizedName, defaultName, draw, onCreated }: Props) {
   return (
     <>
       <p>
-        Equipe {name}, tirez une lettre ! <strong>{letter}</strong>
+        Votre lettre est <strong>{letter}</strong>
       </p>
       <button onClick={() => onCreated(name, letter)}>Continuer</button>
     </>

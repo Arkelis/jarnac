@@ -7,7 +7,7 @@ function randomInt(max: number) {
 }
 
 function initialBag() {
-  return Array()
+  return ([] as string[])
     .concat(Array(14).fill("A"))
     .concat(Array(4).fill("B"))
     .concat(Array(6).fill("C"))

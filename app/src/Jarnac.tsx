@@ -20,7 +20,7 @@ function Jarnac() {
       />
     );
 
-  return <Game teams={{ team1, team2 }} />;
+  return <Game teamNames={{ team1, team2 }} />;
 }
 
 export default Jarnac;

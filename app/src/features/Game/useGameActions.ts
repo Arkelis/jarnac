@@ -1,5 +1,7 @@
 import { useBag } from "features/bag";
 import { useCallback, useReducer } from "react";
+import { opponent, Team } from "types";
+import { useTeamTurn } from "./useTeamTurn";
 
 interface Params {
   team1: string;
@@ -7,7 +9,6 @@ interface Params {
 }
 
 type Board = string[][];
-type TeamOneOrTwo = "team1" | "team2";
 
 interface GameState {
   team1: { name: string; board: Board; letters: string[] };
@@ -15,21 +16,17 @@ interface GameState {
 }
 
 type Action =
-  | { team: TeamOneOrTwo; type: "init"; letters: string[] } // take 6 letters from the bag
-  | { team: TeamOneOrTwo; type: "take"; letter: string } // take a new letter from the bag
+  | { team: Team; type: "init"; letters: string[] } // take 6 letters from the bag
+  | { team: Team; type: "take"; letter: string } // take a new letter from the bag
   | {
-      team: TeamOneOrTwo;
+      team: Team;
       type: "swap";
       lettersToRemove: string[];
       newLetters: string[];
     } // swap three letters from the bag
-  | { team: TeamOneOrTwo; type: "pass" } // pass
-  | { team: TeamOneOrTwo; type: "jarnac"; lineIndex: number; word: string[] } // steal a word from the other team
-  | { team: TeamOneOrTwo; type: "make"; lineIndex: number; word: string[] }; // make a new word
-
-function opponent(t: TeamOneOrTwo): TeamOneOrTwo {
-  return t == "team1" ? "team2" : "team1";
-}
+  | { team: Team; type: "pass" } // pass
+  | { team: Team; type: "jarnac"; lineIndex: number; word: string[] } // steal a word from the other team
+  | { team: Team; type: "make"; lineIndex: number; word: string[] }; // make a new word
 
 function gameReducer(gameState: GameState, action: Action) {
   switch (action.type) {
@@ -72,32 +69,35 @@ function initialGame({ team1, team2 }: Params): GameState {
 
 export function useGameActions({ team1, team2 }: Params) {
   const { bag, draw, swapThree } = useBag();
-  const [teamsState, dispatch] = useReducer(
+  const { currentTeam, changeTurn } = useTeamTurn();
+  const [gameState, dispatch] = useReducer(
     gameReducer,
     { team1, team2 },
     initialGame
   );
   const init = useCallback(
-    (team: TeamOneOrTwo) => {
-      const letters = Array(6).map(draw);
+    (team: Team) => {
+      const letters = Array(6).fill(undefined).map(draw);
       dispatch({ team, type: "init", letters });
     },
     [dispatch]
   );
   const take = useCallback(
-    (team: TeamOneOrTwo) => {
+    (team: Team) => {
       const letter = draw();
       dispatch({ team, type: "take", letter });
+      changeTurn();
     },
     [dispatch, draw]
   );
   const swap = useCallback(
-    (team: TeamOneOrTwo, lettersToRemove: string[]) => {
+    (team: Team, lettersToRemove: string[]) => {
       const newLetters = swapThree(lettersToRemove);
       dispatch({ team, type: "swap", lettersToRemove, newLetters });
+      changeTurn();
     },
     [dispatch]
   );
 
-  return { state: teamsState, init, take, swap };
+  return { gameState, currentTeam, init, take, swap };
 }

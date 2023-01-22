@@ -69,7 +69,7 @@ function FirstPlayerDraw({ onAllPlayersSorted }: Props) {
       </ul>
       <p>
         Ordre de passage:
-        <pre>{sortedTeams.join(", ")}</pre>
+        <p>{sortedTeams.join(", ")}</p>
       </p>
       <button
         onClick={() =>
