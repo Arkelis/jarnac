@@ -15,6 +15,12 @@ interface GameState {
   team2: { name: string; board: Board; letters: string[] };
 }
 
+export interface GameActions {
+  init: (team: Team) => void;
+  take: (team: Team) => void;
+  swap: (team: Team, lettersToRemove: string[]) => void;
+}
+
 type Action =
   | { team: Team; type: "init"; letters: string[] } // take 6 letters from the bag
   | { team: Team; type: "take"; letter: string } // take a new letter from the bag
@@ -68,13 +74,14 @@ function initialGame({ team1, team2 }: Params): GameState {
 }
 
 export function useGameActions({ team1, team2 }: Params) {
-  const { bag, draw, swapThree } = useBag();
+  const { draw, swapThree } = useBag();
   const { currentTeam, changeTurn } = useTeamTurn();
   const [gameState, dispatch] = useReducer(
     gameReducer,
     { team1, team2 },
     initialGame
   );
+
   const init = useCallback(
     (team: Team) => {
       const letters = Array(6).fill(undefined).map(draw);
@@ -82,6 +89,7 @@ export function useGameActions({ team1, team2 }: Params) {
     },
     [dispatch]
   );
+
   const take = useCallback(
     (team: Team) => {
       const letter = draw();
@@ -90,11 +98,11 @@ export function useGameActions({ team1, team2 }: Params) {
     },
     [dispatch, draw]
   );
+
   const swap = useCallback(
     (team: Team, lettersToRemove: string[]) => {
       const newLetters = swapThree(lettersToRemove);
       dispatch({ team, type: "swap", lettersToRemove, newLetters });
-      changeTurn();
     },
     [dispatch]
   );

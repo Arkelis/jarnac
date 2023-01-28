@@ -11,7 +11,7 @@ function Game({ teamNames }: Props) {
   const {
     gameState: { team1, team2 },
     currentTeam,
-    init,
+    ...actions
   } = useGameActions({ team1: teamOneName, team2: teamTwoName });
   return (
     <>
@@ -19,15 +19,19 @@ function Game({ teamNames }: Props) {
       <div>
         <p>Plateau de l&apos;équipe {team1.name}</p>
         <Set
+          team={Team.team1}
+          playing={currentTeam === Team.team1}
           letters={team1.letters}
           lines={team1.board}
-          takeSixLetters={() => init(Team.team1)}
+          {...actions}
         />
         <p>Plateau de l&apos;équipe {team2.name}</p>
         <Set
+          team={Team.team2}
+          playing={currentTeam === Team.team2}
           letters={team2.letters}
           lines={team2.board}
-          takeSixLetters={() => init(Team.team2)}
+          {...actions}
         />
       </div>
     </>
