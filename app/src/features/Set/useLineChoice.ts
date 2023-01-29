@@ -9,11 +9,22 @@ export function useLineChoice() {
     setChosenLine(idx);
   }, []);
 
+  const setDefaultLineChoiceOrAsk = useCallback(
+    (lines: string[][]) => {
+      console.log(lines);
+      if (lines.length === 0) return setChosenLine(0);
+      setLineMustBeChosen(true);
+    },
+    [setChosenLine, setLineMustBeChosen]
+  );
+
+  const resetChosenLine = () => setChosenLine(undefined);
+
   return {
     chosenLine,
-    setChosenLine,
     lineMustBeChosen,
-    setLineMustBeChosen,
     handleLineChoice,
+    setDefaultLineChoiceOrAsk,
+    resetChosenLine,
   };
 }

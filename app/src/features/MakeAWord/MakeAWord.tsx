@@ -3,10 +3,11 @@ import { useCallback, useState } from "react";
 interface Props {
   letters: string[];
   line: string[];
-  onConfirm: () => void;
+  onConfirm: (word: string[], otherLetters: string[]) => void;
+  onCancel: () => void;
 }
 
-function MakeAWord({ letters, line, onConfirm }: Props) {
+function MakeAWord({ letters, line, onConfirm, onCancel }: Props) {
   const [word, setWord] = useState(line);
   const [otherLetters, setOtherLetters] = useState(letters);
 
@@ -52,7 +53,8 @@ function MakeAWord({ letters, line, onConfirm }: Props) {
           </li>
         ))}
       </ul>
-      <button onClick={onConfirm}>Valider</button>
+      <button onClick={() => onConfirm(word, otherLetters)}>Valider</button>
+      <button onClick={onCancel}>Annuler</button>
     </div>
   );
 }

@@ -16,7 +16,7 @@ function Board({ lines, lineMustBeChosen, onLineChoice }: Props) {
                 Sélectionner cette ligne
               </button>
             )}
-            {lines[idx]?.join() || "Ligne vide !"}
+            {lines[idx]?.join("") || "_"}
           </li>
         ))}
     </ul>

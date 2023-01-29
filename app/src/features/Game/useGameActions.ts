@@ -1,111 +1,226 @@
 import { useBag } from "features/bag";
 import { useCallback, useReducer } from "react";
 import { opponent, Team } from "types";
-import { useTeamTurn } from "./useTeamTurn";
+
+type Board = string[][];
+
+export enum ActionType {
+  proposeWord = "proposeWord",
+  refuseWord = "refuseWord",
+  changeTurn = "changeTurn",
+  approveWord = "approveWord",
+  init = "init",
+  take = "take",
+  swap = "swap",
+  pass = "pass",
+  jarnac = "jarnac",
+}
+
+type Action =
+  | { type: ActionType.proposeWord; wordProposition: PendingWord }
+  | { type: ActionType.refuseWord }
+  | { type: ActionType.changeTurn }
+  | { type: ActionType.approveWord }
+  | { type: ActionType.init; letters: string[] } // take 6 letters from the bag
+  | { type: ActionType.take; letter: string } // take a new letter from the bag
+  | {
+      type: ActionType.swap;
+      lettersToRemove: string[];
+      newLetters: string[];
+    } // swap three letters from the bag
+  | { type: ActionType.pass } // pass
+  | { type: ActionType.jarnac; lineIndex: number; word: string[] }; // steal a word from the other team
+
+export interface PendingWord {
+  word: string[];
+  lineIndex: number;
+  otherLetters: string[];
+}
+
+interface GameState {
+  currentTeam: Team;
+  pendingWord: PendingWord | null;
+  team1: {
+    possibleActions: ActionType[];
+    name: string;
+    board: Board;
+    letters: string[];
+  };
+  team2: {
+    possibleActions: ActionType[];
+    name: string;
+    board: Board;
+    letters: string[];
+  };
+}
+
+function gameReducer(currentGameState: GameState, action: Action) {
+  const gameState = structuredClone(currentGameState) as GameState;
+  const currentTeam = gameState.currentTeam;
+  const opponentTeam = opponent(currentTeam);
+
+  switch (action.type) {
+    case ActionType.changeTurn:
+      gameState.currentTeam = opponentTeam;
+      return gameState;
+
+    case ActionType.init:
+      gameState[currentTeam].letters = action.letters;
+      gameState[currentTeam].possibleActions = [
+        ActionType.pass,
+        ActionType.proposeWord,
+      ];
+      return gameState;
+
+    case ActionType.take:
+      gameState[currentTeam].letters.push(action.letter);
+      gameState[currentTeam].possibleActions = [
+        ActionType.pass,
+        ActionType.proposeWord,
+      ];
+      return gameState;
+
+    case ActionType.swap: {
+      const currentLetters = gameState[currentTeam].letters;
+      action.lettersToRemove.forEach((letter) => {
+        const idx = currentLetters.indexOf(letter);
+        currentLetters.splice(idx, 1);
+      });
+      gameState[currentTeam].letters = currentLetters.concat(
+        ...action.newLetters
+      );
+      return gameState;
+    }
+
+    case ActionType.pass:
+      gameState[opponentTeam].possibleActions = [
+        ActionType.take,
+        ActionType.swap,
+      ];
+      gameState[currentTeam].possibleActions = [];
+      gameState.currentTeam = opponentTeam;
+      return gameState;
+
+    case ActionType.jarnac:
+      return gameState;
+
+    case ActionType.proposeWord:
+      gameState.pendingWord = action.wordProposition;
+      gameState[currentTeam].possibleActions = [];
+      gameState[opponentTeam].possibleActions = [
+        ActionType.approveWord,
+        ActionType.refuseWord,
+      ];
+      gameState.currentTeam = opponentTeam;
+      return gameState;
+
+    case ActionType.refuseWord:
+      gameState.pendingWord = null;
+      gameState[currentTeam].possibleActions = [];
+      gameState[opponentTeam].possibleActions = [
+        ActionType.pass,
+        ActionType.proposeWord,
+      ];
+      gameState.currentTeam = opponentTeam;
+      return gameState;
+
+    case ActionType.approveWord: {
+      if (!gameState.pendingWord) return gameState;
+      const { word, lineIndex, otherLetters } = gameState.pendingWord;
+      gameState.pendingWord = null;
+      gameState[opponentTeam].board[lineIndex] = word;
+      gameState[opponentTeam].letters = otherLetters;
+      gameState[opponentTeam].possibleActions = [ActionType.take];
+      gameState[currentTeam].possibleActions = [];
+      gameState.currentTeam = opponentTeam;
+      return gameState;
+    }
+  }
+}
 
 interface Params {
   team1: string;
   team2: string;
 }
 
-type Board = string[][];
-
-interface GameState {
-  team1: { name: string; board: Board; letters: string[] };
-  team2: { name: string; board: Board; letters: string[] };
+function initialGame({ team1, team2 }: Params): GameState {
+  return {
+    pendingWord: null,
+    currentTeam: Team.team1,
+    team1: {
+      possibleActions: [ActionType.take],
+      name: team1,
+      board: [],
+      letters: [],
+    },
+    team2: {
+      possibleActions: [],
+      name: team2,
+      board: [],
+      letters: [],
+    },
+  };
 }
 
 export interface GameActions {
-  init: (team: Team) => void;
-  take: (team: Team) => void;
-  swap: (team: Team, lettersToRemove: string[]) => void;
-}
-
-type Action =
-  | { team: Team; type: "init"; letters: string[] } // take 6 letters from the bag
-  | { team: Team; type: "take"; letter: string } // take a new letter from the bag
-  | {
-      team: Team;
-      type: "swap";
-      lettersToRemove: string[];
-      newLetters: string[];
-    } // swap three letters from the bag
-  | { team: Team; type: "pass" } // pass
-  | { team: Team; type: "jarnac"; lineIndex: number; word: string[] } // steal a word from the other team
-  | { team: Team; type: "make"; lineIndex: number; word: string[] }; // make a new word
-
-function gameReducer(gameState: GameState, action: Action) {
-  switch (action.type) {
-    case "init":
-      gameState[action.team].letters = action.letters;
-      return gameState;
-    case "take":
-      gameState[action.team].letters.push(action.letter);
-      return gameState;
-    case "swap": {
-      const currentLetters = gameState[action.team].letters;
-      action.lettersToRemove.forEach((letter) => {
-        const idx = currentLetters.indexOf(letter);
-        currentLetters.splice(idx, 1);
-      });
-      const newLetters = currentLetters.concat(...action.newLetters);
-      gameState[action.team].letters = newLetters;
-      return gameState;
-    }
-    case "pass":
-      return gameState;
-    case "jarnac":
-      gameState[opponent(action.team)].board.splice(action.lineIndex, 1);
-      // TODO: remove used letters from team letters
-      gameState[action.team].board.push(action.word);
-      return gameState;
-    case "make":
-      gameState[action.team].board[action.lineIndex] = action.word;
-      // TODO: remove used letters from team letters
-      return gameState;
-  }
-}
-
-function initialGame({ team1, team2 }: Params): GameState {
-  return {
-    team1: { name: team1, board: [], letters: [] },
-    team2: { name: team2, board: [], letters: [] },
-  };
+  init: () => void;
+  take: () => void;
+  swap: (lettersToRemove: string[]) => void;
+  proposeWord: (wordPropostion: PendingWord) => void;
+  approveWord: () => void;
+  refuseWord: () => void;
+  pass: () => void;
 }
 
 export function useGameActions({ team1, team2 }: Params) {
   const { draw, swapThree } = useBag();
-  const { currentTeam, changeTurn } = useTeamTurn();
   const [gameState, dispatch] = useReducer(
     gameReducer,
     { team1, team2 },
     initialGame
   );
 
-  const init = useCallback(
-    (team: Team) => {
-      const letters = Array(6).fill(undefined).map(draw);
-      dispatch({ team, type: "init", letters });
-    },
-    [dispatch]
+  const init = useCallback(() => {
+    const letters = Array(6).fill(undefined).map(draw);
+    dispatch({ type: ActionType.init, letters });
+  }, []);
+
+  const take = useCallback(() => {
+    const letter = draw();
+    dispatch({ type: ActionType.take, letter });
+  }, [draw]);
+
+  const swap = useCallback((lettersToRemove: string[]) => {
+    const newLetters = swapThree(lettersToRemove);
+    dispatch({ type: ActionType.swap, lettersToRemove, newLetters });
+  }, []);
+
+  const pass = useCallback(() => dispatch({ type: ActionType.pass }), []);
+
+  const proposeWord = useCallback(
+    (wordProposition: PendingWord) =>
+      dispatch({ type: ActionType.proposeWord, wordProposition }),
+    []
   );
 
-  const take = useCallback(
-    (team: Team) => {
-      const letter = draw();
-      dispatch({ team, type: "take", letter });
-      changeTurn();
-    },
-    [dispatch, draw]
+  const approveWord = useCallback(
+    () => dispatch({ type: ActionType.approveWord }),
+    []
   );
 
-  const swap = useCallback(
-    (team: Team, lettersToRemove: string[]) => {
-      const newLetters = swapThree(lettersToRemove);
-      dispatch({ team, type: "swap", lettersToRemove, newLetters });
-    },
-    [dispatch]
+  const refuseWord = useCallback(
+    () => dispatch({ type: ActionType.refuseWord }),
+    []
   );
 
-  return { gameState, currentTeam, init, take, swap };
+  return {
+    gameState,
+    init,
+    take,
+    swap,
+    pass,
+    proposeWord,
+    approveWord,
+    refuseWord,
+  };
 }
