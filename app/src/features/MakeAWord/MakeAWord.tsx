@@ -46,13 +46,13 @@ function MakeAWord({ letters, line, onConfirm, onCancel }: Props) {
         ))}
       </p>
       <label>Lettres disponibles</label>
-      <ul>
+      <p>
         {otherLetters.map((letter, idx) => (
-          <li key={`${letter}${idx}`}>
-            <button onClick={addToWord(letter, idx)}>{letter}</button>
-          </li>
+          <button key={`${letter}${idx}`} onClick={addToWord(letter, idx)}>
+            {letter}
+          </button>
         ))}
-      </ul>
+      </p>
       <button onClick={() => onConfirm(word, otherLetters)}>Valider</button>
       <button onClick={onCancel}>Annuler</button>
     </div>

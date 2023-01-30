@@ -6,6 +6,7 @@ import {
   PendingWord,
 } from "features/Game/useGameActions";
 import MakeAWord from "features/MakeAWord/MakeAWord";
+import SwapLetters from "features/SwapLetters/SwapLetters";
 import { useCallback, useState } from "react";
 import { Team } from "types";
 import { useLineChoice } from "./useLineChoice";
@@ -24,6 +25,7 @@ function Set({
   letters,
   init,
   take,
+  swap,
   proposeWord,
   pendingWord,
   approveWord,
@@ -39,6 +41,7 @@ function Set({
   } = useLineChoice();
   const [isMakingAWord, setIsMakingAWord] = useState(false);
   const [isInitiated, setIsInitiated] = useState(false);
+  const [isSwappingLetters, setIsSwappingLetters] = useState(false);
 
   const initiateSet = useCallback(() => {
     init();
@@ -48,6 +51,10 @@ function Set({
   const prepareMakeAWord = useCallback(() => {
     setIsMakingAWord(true);
     setDefaultLineChoiceOrAsk(lines);
+  }, [lines]);
+
+  const prepareSwap = useCallback(() => {
+    setIsSwappingLetters(true);
   }, [lines]);
 
   return (
@@ -75,11 +82,26 @@ function Set({
       {possibleActions.includes(ActionType.take) && isInitiated && (
         <button onClick={take}>Piocher une lettre</button>
       )}
+      {possibleActions.includes(ActionType.take) && isInitiated && (
+        <button onClick={prepareSwap}>Echanger trois lettres</button>
+      )}
       {possibleActions.includes(ActionType.proposeWord) && !isMakingAWord && (
         <button onClick={prepareMakeAWord}>Fabriquer un nouveau mot</button>
       )}
       {possibleActions.includes(ActionType.pass) && !isMakingAWord && (
         <button onClick={pass}>Passer</button>
+      )}
+      {isSwappingLetters && (
+        <SwapLetters
+          letters={letters}
+          onConfirm={(letters) => {
+            setIsSwappingLetters(false);
+            swap(letters);
+          }}
+          onCancel={() => {
+            setIsSwappingLetters(false);
+          }}
+        />
       )}
       {isMakingAWord && chosenLine !== undefined && (
         <MakeAWord

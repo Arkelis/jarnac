@@ -40,7 +40,7 @@ function takeALetter(bag: Bag) {
   if (bag.length === 0) {
     throw new TypeError("Bag is empty");
   }
-  const newBag = [...bag] as Bag;
+  const newBag = [...bag];
   const letter = newBag.splice(randomInt(newBag.length), 1).at(0) as string;
   return { newBag, letter };
 }
@@ -49,9 +49,12 @@ function swapThreeLetters(bag: Bag, letters: string[]) {
   if (bag.length < 3) {
     throw new TypeError("Bag has less than 3 letters");
   }
-  const newBag = [...bag] as Bag;
-  const newLetters = newBag.splice(randomInt(newBag.length), 3, ...letters);
-  return { newBag, newLetters };
+  const newBag = [...bag];
+  const newLetters = Array(3)
+    .fill(undefined)
+    .map(() => newBag.splice(randomInt(newBag.length), 1))
+    .flat();
+  return { newBag: [...newBag, ...letters], newLetters };
 }
 
 export function useBag() {

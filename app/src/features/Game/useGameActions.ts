@@ -86,9 +86,14 @@ function gameReducer(currentGameState: GameState, action: Action) {
         const idx = currentLetters.indexOf(letter);
         currentLetters.splice(idx, 1);
       });
-      gameState[currentTeam].letters = currentLetters.concat(
-        ...action.newLetters
-      );
+      gameState[currentTeam].letters = [
+        ...currentLetters,
+        ...action.newLetters,
+      ];
+      gameState[currentTeam].possibleActions = [
+        ActionType.proposeWord,
+        ActionType.pass,
+      ];
       return gameState;
     }
 
@@ -173,7 +178,7 @@ export interface GameActions {
 }
 
 export function useGameActions({ team1, team2 }: Params) {
-  const { draw, swapThree } = useBag();
+  const { bag, draw, swapThree } = useBag();
   const [gameState, dispatch] = useReducer(
     gameReducer,
     { team1, team2 },
@@ -186,13 +191,21 @@ export function useGameActions({ team1, team2 }: Params) {
   }, []);
 
   const take = useCallback(() => {
+    if (bag.length < 1) {
+      return "error";
+    }
     const letter = draw();
     dispatch({ type: ActionType.take, letter });
+    return "ok";
   }, [draw]);
 
   const swap = useCallback((lettersToRemove: string[]) => {
+    if (bag.length < 3) {
+      return "error";
+    }
     const newLetters = swapThree(lettersToRemove);
     dispatch({ type: ActionType.swap, lettersToRemove, newLetters });
+    return "ok";
   }, []);
 
   const pass = useCallback(() => dispatch({ type: ActionType.pass }), []);
