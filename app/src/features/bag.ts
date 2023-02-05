@@ -72,6 +72,10 @@ export function useBag() {
     },
     [bag]
   );
+  const discard = useCallback(
+    (letter?: string) => setBag((bag) => (letter ? [...bag, letter] : bag)),
+    []
+  );
 
-  return { bag, draw, swapThree };
+  return { bag, draw, discard, swapThree };
 }

@@ -11,7 +11,6 @@ export function useLineChoice() {
 
   const setDefaultLineChoiceOrAsk = useCallback(
     (lines: string[][]) => {
-      console.log(lines);
       if (lines.length === 0) return setChosenLine(0);
       setLineMustBeChosen(true);
     },

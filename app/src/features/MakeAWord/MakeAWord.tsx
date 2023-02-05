@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { countBy } from "lodash";
+import { useCallback, useMemo, useState } from "react";
 
 interface Props {
   letters: string[];
@@ -10,6 +11,16 @@ interface Props {
 function MakeAWord({ letters, line, onConfirm, onCancel }: Props) {
   const [word, setWord] = useState(line);
   const [otherLetters, setOtherLetters] = useState(letters);
+
+  const canConfirm = useMemo(() => {
+    if (word.length < 3) return false;
+    const wordCounter = countBy(word);
+    const lineCounter = countBy(line);
+    for (const letter in lineCounter) {
+      if (lineCounter[letter] > (wordCounter[letter] || 0)) return false;
+    }
+    return true;
+  }, [word, line]);
 
   const addToWord = useCallback(
     (letter: string, idx: number) => () => {
@@ -53,7 +64,12 @@ function MakeAWord({ letters, line, onConfirm, onCancel }: Props) {
           </button>
         ))}
       </p>
-      <button onClick={() => onConfirm(word, otherLetters)}>Valider</button>
+      <button
+        disabled={!canConfirm}
+        onClick={() => onConfirm(word, otherLetters)}
+      >
+        Valider
+      </button>
       <button onClick={onCancel}>Annuler</button>
     </div>
   );
