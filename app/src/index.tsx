@@ -1,15 +1,29 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import Jarnac from "./Jarnac";
 import reportWebVitals from "./reportWebVitals";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+import Jarnac from "Jarnac";
+import StartPage from "pages/StartPage";
+
+const router = createBrowserRouter([
+  { path: "/", element: <StartPage /> },
+  { path: "/local", element: <Jarnac /> },
+  { path: "/en-ligne/:id", element: <Jarnac /> },
+  { path: "*", element: <Navigate to="/" /> },
+]);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <Jarnac />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 
