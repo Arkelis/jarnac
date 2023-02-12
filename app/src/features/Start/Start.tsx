@@ -21,13 +21,11 @@ function Start({ localGamePath, onGameCreated }: Props) {
         <button onClick={() => setIsCreatingGame(true)}>
           Créer une partie en ligne
         </button>
-        {isCreatingGame && (
-          <CreateNewOnlineGame
-            open={isCreatingGame}
-            onCancel={() => setIsCreatingGame(false)}
-            onGameCreated={onGameCreated}
-          />
-        )}
+        <CreateNewOnlineGame
+          open={isCreatingGame}
+          onCancel={() => setIsCreatingGame(false)}
+          onGameCreated={onGameCreated}
+        />
       </li>
       <li>
         <button>Rejoindre une partie en ligne</button>

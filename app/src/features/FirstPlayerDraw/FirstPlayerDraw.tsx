@@ -12,7 +12,7 @@ interface TeamsState {
 }
 
 function FirstPlayerDraw({ onAllPlayersSorted }: Props) {
-  const { bag, draw } = useBag();
+  const { draw } = useBag();
   const [teams, setTeams] = useState<TeamsState>({
     team1: {},
     team2: {},

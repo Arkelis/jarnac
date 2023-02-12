@@ -1,5 +1,5 @@
 import Set from "features/Set/Set";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Team, Teams } from "types";
 import { useGameActions } from "./useGameActions";
 

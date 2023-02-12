@@ -5,8 +5,8 @@ import { TeamsToDefine } from "./types";
 
 function Jarnac() {
   const [teams, setTeams] = useState<TeamsToDefine>({
-    team1: "Louise", // undefined
-    team2: "Guillaume", // undefined
+    team1: undefined, // undefined
+    team2: undefined, // undefined
   });
 
   const { team1, team2 } = teams;
