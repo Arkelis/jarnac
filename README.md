@@ -1,5 +1,7 @@
 # jarnac
 
+[Jarnac](https://fr.wikipedia.org/wiki/Jarnac_(jeu)) est un jeu de lettres où deux équipent s'affrontent pour compléter leurs grilles de mots avec des anagrammes de plus en plus longues.
+
 ## Matériel et règles du Jarnac
 
 - Deux plateau comportant chacun
