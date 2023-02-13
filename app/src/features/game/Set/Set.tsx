@@ -1,12 +1,12 @@
-import ApproveWord from "features/ApproveWord/ApproveWord";
-import Board from "features/Board/Board";
+import ApproveWord from "features/game/ApproveWord/ApproveWord";
+import Board from "features/game/Board/Board";
 import {
   ActionType,
   GameActions,
   GameState,
-} from "features/Game/useGameActions";
-import MakeAWord from "features/MakeAWord/MakeAWord";
-import SwapLettersSection from "features/SwapLetters/SwapLettersSection";
+} from "features/game/Game/useGameActions";
+import MakeAWord from "features/game/MakeAWord/MakeAWord";
+import SwapLettersSection from "features/game/SwapLetters/SwapLettersSection";
 import { useCallback, useState } from "react";
 import { opponent, Team } from "types";
 import { useLineChoice } from "./useLineChoice";

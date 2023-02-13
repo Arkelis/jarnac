@@ -1,22 +1,22 @@
 import { useRef, useState } from "react";
 
 interface Props {
-  anonymizedName: string;
-  defaultName?: string;
+  defaultName: string;
+  definedName?: string;
   draw: () => string;
   onCreated: (teamName: string, letter: string) => void;
 }
 
-function CreateTeam({ anonymizedName, defaultName, draw, onCreated }: Props) {
-  const [name, setName] = useState<string | undefined>(defaultName);
+function CreateTeam({ defaultName, definedName, draw, onCreated }: Props) {
+  const [name, setName] = useState<string | undefined>(definedName);
   const [letter, setLetter] = useState<string>();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   if (name === undefined) {
     return (
       <form>
-        <p>{anonymizedName}, quel est votre nom ?</p>
-        <input ref={inputRef} />
+        <p>Entrer un nom pour l&apos;équipe</p>
+        <input ref={inputRef} defaultValue={defaultName} />
         <button onClick={() => setName(inputRef.current?.value)}>
           Enregistrer
         </button>

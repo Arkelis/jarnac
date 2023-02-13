@@ -1,4 +1,4 @@
-import { ActionType } from "features/Game/useGameActions";
+import { ActionType } from "features/game/Game/useGameActions";
 import { useState } from "react";
 import SwapLetters from "./SwapLetters";
 

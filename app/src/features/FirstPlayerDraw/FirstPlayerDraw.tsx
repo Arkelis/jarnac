@@ -22,8 +22,8 @@ function FirstPlayerDraw({ onAllPlayersSorted }: Props) {
     return (
       <CreateTeam
         key={1}
-        anonymizedName="Équipe 1"
-        defaultName={teams.team1.name}
+        defaultName="Charme"
+        definedName={teams.team1.name}
         draw={draw}
         onCreated={(name: string, letter: string) => {
           setTeams({ ...teams, team1: { name, letter } });
@@ -36,8 +36,8 @@ function FirstPlayerDraw({ onAllPlayersSorted }: Props) {
     return (
       <CreateTeam
         key={2}
-        anonymizedName="Équipe 2"
-        defaultName={teams.team2.name}
+        defaultName="Ébène"
+        definedName={teams.team2.name}
         draw={draw}
         onCreated={(name: string, letter: string) => {
           setTeams({ ...teams, team2: { name, letter } });

@@ -1,6 +1,6 @@
 import { useBag } from "features/bag";
 import { useCallback, useEffect, useReducer } from "react";
-import { opponent, Team } from "types";
+import { opponent, Team, Teams } from "types";
 
 type Board = string[][];
 
@@ -45,21 +45,18 @@ export interface PendingWord {
   otherLetters: string[];
 }
 
+interface TeamState {
+  possibleActions: ActionType[];
+  name: string;
+  board: Board;
+  letters: string[];
+}
+
 export interface GameState {
   currentTeam: Team;
   pendingWord: PendingWord | null;
-  team1: {
-    possibleActions: ActionType[];
-    name: string;
-    board: Board;
-    letters: string[];
-  };
-  team2: {
-    possibleActions: ActionType[];
-    name: string;
-    board: Board;
-    letters: string[];
-  };
+  team1: TeamState;
+  team2: TeamState;
 }
 
 function isConsonant(letter: string) {
@@ -233,7 +230,10 @@ export interface GameActions {
   refuseJarnac: () => void;
 }
 
-export function useGameActions({ team1, team2 }: Params) {
+export function useGameActions({
+  team1,
+  team2,
+}: Params): { gameState: GameState } & GameActions {
   const { bag, draw, discard, swapThree } = useBag();
   const [gameState, dispatch] = useReducer(
     gameReducer,

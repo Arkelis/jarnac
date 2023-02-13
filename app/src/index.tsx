@@ -7,13 +7,14 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import Jarnac from "Jarnac";
 import StartPage from "pages/StartPage";
+import LocalGamePage from "pages/LocalGamePage";
+import OnlineGamePage from "pages/OnlineGamePage";
 
 const router = createBrowserRouter([
   { path: "/", element: <StartPage /> },
-  { path: "/local", element: <Jarnac /> },
-  { path: "/en-ligne/:id", element: <Jarnac /> },
+  { path: "/local", element: <LocalGamePage /> },
+  { path: "/en-ligne/:id", element: <OnlineGamePage /> },
   { path: "*", element: <Navigate to="/" /> },
 ]);
 

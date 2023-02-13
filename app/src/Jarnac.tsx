@@ -1,6 +1,6 @@
 import { useState } from "react";
 import FirstPlayerDraw from "./features/FirstPlayerDraw/FirstPlayerDraw";
-import Game from "./features/Game/Game";
+import Game from "./features/game/Game/Game";
 import { TeamsToDefine } from "./types";
 
 function Jarnac() {

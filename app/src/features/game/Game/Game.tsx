@@ -1,4 +1,4 @@
-import Set from "features/Set/Set";
+import Set from "features/game/Set/Set";
 import { useMemo } from "react";
 import { Team, Teams } from "types";
 import { useGameActions } from "./useGameActions";
