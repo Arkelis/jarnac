@@ -1,4 +1,4 @@
-import { teamsPresenceState } from "db/client";
+import { teamsPresenceState } from "db/queries";
 import { useEffect, useMemo, useState } from "react";
 import EnterName from "./EnterName";
 import * as uuid from "uuid";

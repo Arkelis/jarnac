@@ -10,6 +10,7 @@ import {
 import StartPage from "pages/StartPage";
 import LocalGamePage from "pages/LocalGamePage";
 import OnlineGamePage from "pages/OnlineGamePage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const router = createBrowserRouter([
   { path: "/", element: <StartPage /> },
@@ -24,7 +25,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={new QueryClient()}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </React.StrictMode>
 );
 
