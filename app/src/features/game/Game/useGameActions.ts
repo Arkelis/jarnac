@@ -196,20 +196,21 @@ function gameReducer(currentGameState: GameState, action: Action) {
 interface Params {
   team1: string;
   team2: string;
+  firstTeam: Team;
 }
 
-function initialGame({ team1, team2 }: Params): GameState {
+function initialGame({ team1, team2, firstTeam }: Params): GameState {
   return {
     pendingWord: null,
-    currentTeam: Team.team1,
+    currentTeam: firstTeam,
     team1: {
-      possibleActions: [ActionType.take],
+      possibleActions: firstTeam === Team.team1 ? [ActionType.take] : [],
       name: team1,
       board: [],
       letters: [],
     },
     team2: {
-      possibleActions: [],
+      possibleActions: firstTeam === Team.team2 ? [ActionType.take] : [],
       name: team2,
       board: [],
       letters: [],
@@ -233,13 +234,16 @@ export interface GameActions {
 export function useGameActions({
   team1,
   team2,
+  firstTeam,
 }: Params): { gameState: GameState } & GameActions {
   const { bag, draw, discard, swapThree } = useBag();
   const [gameState, dispatch] = useReducer(
     gameReducer,
-    { team1, team2 },
+    { team1, team2, firstTeam },
     initialGame
   );
+
+  console.log(firstTeam);
 
   const init = useCallback(() => {
     const letters = Array(6).fill(undefined).map(draw);

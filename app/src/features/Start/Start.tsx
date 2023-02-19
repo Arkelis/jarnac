@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import CreateNewOnlineGame from "./CreateNewOnlineGame";
+import CreateNewOnlineGame from "features/CreateNewOnlineGame/CreateNewOnlineGame";
 
 interface Props {
   localGamePath: string;

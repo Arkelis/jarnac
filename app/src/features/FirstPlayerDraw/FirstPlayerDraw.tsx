@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { useBag } from "../bag";
+import { useBag } from "features/bag";
 import CreateTeam from "./CreateTeam";
+import { Team } from "types";
 
 interface Props {
-  onAllPlayersSorted: (sortedPlayers: { team1: string; team2: string }) => void;
+  onAllPlayersSorted: (sortedPlayers: {
+    team1: string;
+    team2: string;
+    firstTeam: Team;
+  }) => void;
+  onlineTeam?: Team | null;
 }
 
 interface TeamsState {
@@ -11,73 +17,73 @@ interface TeamsState {
   team2: { name?: string; letter?: string };
 }
 
-function FirstPlayerDraw({ onAllPlayersSorted }: Props) {
+const canClick = (team: Team, onlineTeam?: Team | null) => {
+  if (onlineTeam === undefined) return true;
+  if (onlineTeam === null) return false;
+  return team === onlineTeam;
+};
+
+function FirstPlayerDraw({ onAllPlayersSorted, onlineTeam }: Props) {
   const { draw } = useBag();
   const [teams, setTeams] = useState<TeamsState>({
     team1: {},
     team2: {},
   });
 
-  if (teams.team1.letter === undefined) {
-    return (
+  const updateTeams = (team: Team) => (name: string, letter: string) => {
+    const newState = { ...teams, [team]: { name, letter } };
+    if (newState.team1.letter === newState.team2.letter)
+      return setTeams({
+        team1: { name: newState.team1.name, letter: undefined },
+        team2: { name: newState.team2.name, letter: undefined },
+      });
+    setTeams(newState);
+  };
+
+  const sortedTeams =
+    teams.team1.letter &&
+    teams.team2.letter &&
+    Object.entries(teams).sort(([, t1], [, t2]) =>
+      (t1.letter as string).localeCompare(t2.letter as string)
+    );
+
+  return (
+    <>
       <CreateTeam
         key={1}
         defaultName="Charme"
         definedName={teams.team1.name}
         draw={draw}
-        onCreated={(name: string, letter: string) => {
-          setTeams({ ...teams, team1: { name, letter } });
-        }}
+        onCreated={updateTeams(Team.team1)}
+        interactionsEnabled={canClick(Team.team1, onlineTeam)}
       />
-    );
-  }
-
-  if (teams.team2.letter === undefined) {
-    return (
       <CreateTeam
         key={2}
         defaultName="Ébène"
         definedName={teams.team2.name}
         draw={draw}
-        onCreated={(name: string, letter: string) => {
-          setTeams({ ...teams, team2: { name, letter } });
-        }}
+        onCreated={updateTeams(Team.team2)}
+        interactionsEnabled={canClick(Team.team2, onlineTeam)}
       />
-    );
-  }
-
-  if (teams.team1.letter === teams.team2.letter) {
-    setTeams({
-      team1: { name: teams.team1.name, letter: undefined },
-      team2: { name: teams.team2.name, letter: undefined },
-    });
-    return null;
-  }
-
-  const sortedTeams = Object.values(teams)
-    .sort((a, b) => (a.letter as string).localeCompare(b.letter as string))
-    .map((t) => t.name as string);
-
-  return (
-    <>
-      <ul>
-        {Object.values(teams).map(({ name, letter }) => (
-          <li
-            key={`${name}${letter}`}
-          >{`Équipe ${name}. Lettre : ${letter}`}</li>
-        ))}
-      </ul>
-      <p>
-        Ordre de passage:
-        <p>{sortedTeams.join(", ")}</p>
-      </p>
-      <button
-        onClick={() =>
-          onAllPlayersSorted({ team1: sortedTeams[0], team2: sortedTeams[1] })
-        }
-      >
-        Commencer !
-      </button>
+      {sortedTeams && (
+        <>
+          <p>
+            Ordre de passage:{" "}
+            {sortedTeams.map((t) => t[1].name as string).join(", ")}
+          </p>
+          <button
+            onClick={() =>
+              onAllPlayersSorted({
+                team1: teams.team1.name as string,
+                team2: teams.team2.name as string,
+                firstTeam: sortedTeams[0][0] as Team,
+              })
+            }
+          >
+            Commencer !
+          </button>
+        </>
+      )}
     </>
   );
 }

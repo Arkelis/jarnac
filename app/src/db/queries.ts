@@ -1,11 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { GameState } from "features/game/Game/useGameActions";
-
-const supabase = createClient(
-  "https://kskatigvwydjkupclwep.supabase.co",
-  process.env.REACT_APP_SUPABASE_API_KEY || ""
-);
+import { supabase } from "db/client";
 
 interface UseCreateGameParams {
   onSuccess: (id: string) => void;
@@ -50,11 +45,5 @@ export function useFetchGame({ id }: UseFetchGameParams) {
     },
     enabled: Boolean(id),
     retry: false,
-  });
-}
-
-export function teamsPresenceState({ gameId }: { gameId: string }) {
-  return supabase.channel(gameId, {
-    config: { presence: { key: "presences" } },
   });
 }

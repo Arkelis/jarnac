@@ -1,7 +1,7 @@
-import Jarnac from "Jarnac";
+import OfflineGame from "features/OfflineGame/OfflineGame";
 
 function LocalGamePage() {
-  return <Jarnac />;
+  return <OfflineGame />;
 }
 
 export default LocalGamePage;

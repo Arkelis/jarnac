@@ -1,27 +1,19 @@
 import Set from "features/game/Set/Set";
-import { useMemo } from "react";
 import { Team, Teams } from "types";
 import { useGameActions } from "./useGameActions";
 
 interface Props {
   teamNames: Teams;
+  firstTeam: Team;
 }
 
-function Game({ teamNames }: Props) {
+function Game({ teamNames, firstTeam }: Props) {
   const { team1: teamOneName, team2: teamTwoName } = teamNames;
   const { gameState, ...actions } = useGameActions({
     team1: teamOneName,
     team2: teamTwoName,
+    firstTeam,
   });
-
-  // const gameIsFinished = useMemo(() => {
-  //   if (
-  //     gameState.team1.board.filter((el) => el !== undefined).length === 9 ||
-  //     gameState.team2.board.filter((el) => el !== undefined).length === 9
-  //   )
-  //     const team1Score =
-  //     const team2Score =
-  // }, [gameState]);
 
   return (
     <>

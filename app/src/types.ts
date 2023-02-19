@@ -1,6 +1,7 @@
 export interface TeamsToDefine {
-  team1?: string;
-  team2?: string;
+  team1: string;
+  team2: string;
+  firstTeam: Team;
 }
 
 export interface Teams {
