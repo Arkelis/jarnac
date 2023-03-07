@@ -2,7 +2,7 @@ import { teamsPresenceState } from "db/realtime";
 import { useEffect, useMemo, useState } from "react";
 import EnterName from "./EnterName";
 import * as uuid from "uuid";
-import { Team } from "types";
+import { Team, TeamsToDefine } from "types";
 
 interface Props {
   gameId: string;
@@ -10,15 +10,23 @@ interface Props {
   setTeam: (team: Team | null) => void;
   name?: string;
   setName: (name: string) => void;
+  teamNames?: TeamsToDefine;
 }
 
 interface UserPayload {
-  userId: string;
-  userName: string;
-  userTeam?: Team;
+  id: string;
+  name: string;
+  team?: Team;
 }
 
-function OnlineLobby({ gameId, team, setTeam, name, setName }: Props) {
+function OnlineLobby({
+  gameId,
+  team,
+  setTeam,
+  teamNames,
+  name,
+  setName,
+}: Props) {
   const userId = useMemo(() => uuid.v4(), []);
   const [users, setUsers] = useState<UserPayload[]>();
   const [isReady, setIsReady] = useState(false);
@@ -45,15 +53,13 @@ function OnlineLobby({ gameId, team, setTeam, name, setName }: Props) {
         }
       )
       .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
-          await channel.track({
-            userId,
-            userName: name,
-            userTeam: team,
-          });
-        }
+        if (status === "SUBSCRIBED")
+          await channel.track({ id: userId, name, team, isReady });
       });
-  }, [name, team]);
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [name, team, isReady]);
 
   if (name === undefined) return <EnterName onSubmitName={setName} />;
   return (
@@ -61,26 +67,26 @@ function OnlineLobby({ gameId, team, setTeam, name, setName }: Props) {
       <h1>Lobby</h1>
       Joueurs présents :
       <ul>
-        {users?.map(({ userId, userName, userTeam }) =>
-          userTeam === undefined ? <li key={userId}>{userName}</li> : null
+        {users?.map(({ id, name, team }) =>
+          team === undefined ? <li key={id}>{name}</li> : null
         )}
       </ul>
-      Équipe 1
+      {teamNames?.team1 || "Équipe 1"}
       <button disabled={isReady} onClick={() => setTeam(Team.team1)}>
         Rejoindre
       </button>
       <ul>
-        {users?.map(({ userId, userName, userTeam }) =>
-          userTeam === Team.team1 ? <li key={userId}>{userName}</li> : null
+        {users?.map(({ id, name, team }) =>
+          team === Team.team1 ? <li key={id}>{name}</li> : null
         )}
       </ul>
-      Équipe 2
+      {teamNames?.team2 || "Équipe 2"}
       <button disabled={isReady} onClick={() => setTeam(Team.team2)}>
         Rejoindre
       </button>
       <ul>
-        {users?.map(({ userId, userName, userTeam }) =>
-          userTeam === Team.team2 ? <li key={userId}>{userName}</li> : null
+        {users?.map(({ id, name, team }) =>
+          team === Team.team2 ? <li key={id}>{name}</li> : null
         )}
       </ul>
       <button onClick={() => setIsReady((s) => !s)}>

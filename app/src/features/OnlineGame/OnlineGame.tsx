@@ -18,6 +18,7 @@ function OnlineGame({ id }: Props) {
       <OnlineLobby
         gameId={id}
         team={onlineTeam}
+        teamNames={teamNames}
         setTeam={setOnlineTeam}
         name={name}
         setName={setName}
