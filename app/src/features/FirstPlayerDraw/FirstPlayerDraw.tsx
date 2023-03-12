@@ -1,20 +1,17 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useBag } from "features/bag";
-import CreateTeam from "./CreateTeam";
-import { Team } from "types";
+import DrawLetter from "./DrawLetter";
+import { Team, Teams } from "types";
 
 interface Props {
-  onAllPlayersSorted: (sortedPlayers: {
-    team1: string;
-    team2: string;
-    firstTeam: Team;
-  }) => void;
+  teamNames: Teams;
+  onAllPlayersSorted: (firstTeam: Team) => void;
   onlineTeam?: Team | null;
 }
 
-interface TeamsState {
-  team1: { name?: string; letter?: string };
-  team2: { name?: string; letter?: string };
+interface TeamLetters {
+  team1?: string;
+  team2?: string;
 }
 
 const canClick = (team: Team, onlineTeam?: Team | null) => {
@@ -23,63 +20,44 @@ const canClick = (team: Team, onlineTeam?: Team | null) => {
   return team === onlineTeam;
 };
 
-function FirstPlayerDraw({ onAllPlayersSorted, onlineTeam }: Props) {
+function FirstPlayerDraw({ teamNames, onAllPlayersSorted, onlineTeam }: Props) {
   const { draw } = useBag();
-  const [teams, setTeams] = useState<TeamsState>({
-    team1: {},
-    team2: {},
+  const [letters, setLetters] = useState<TeamLetters>({
+    team1: undefined,
+    team2: undefined,
   });
 
-  const updateTeams = (team: Team) => (name: string, letter: string) => {
-    const newState = { ...teams, [team]: { name, letter } };
-    if (newState.team1.letter === newState.team2.letter)
-      return setTeams({
-        team1: { name: newState.team1.name, letter: undefined },
-        team2: { name: newState.team2.name, letter: undefined },
-      });
-    setTeams(newState);
-  };
-
-  const sortedTeams =
-    teams.team1.letter &&
-    teams.team2.letter &&
-    Object.entries(teams).sort(([, t1], [, t2]) =>
-      (t1.letter as string).localeCompare(t2.letter as string)
-    );
+  const firstTeam = useMemo(() => {
+    if (!letters.team1 || !letters.team2) return undefined;
+    return letters.team1.localeCompare(letters.team2) < 0
+      ? Team.team1
+      : Team.team2;
+  }, [letters]);
 
   return (
     <>
-      <CreateTeam
+      <DrawLetter
         key={1}
-        defaultName="Charme"
-        definedName={teams.team1.name}
+        name={teamNames.team1}
         draw={draw}
-        onCreated={updateTeams(Team.team1)}
+        onDrawn={(letter: string) =>
+          setLetters((ls) => ({ ...ls, team1: letter }))
+        }
         interactionsEnabled={canClick(Team.team1, onlineTeam)}
       />
-      <CreateTeam
+      <DrawLetter
         key={2}
-        defaultName="Ébène"
-        definedName={teams.team2.name}
+        name={teamNames.team2}
         draw={draw}
-        onCreated={updateTeams(Team.team2)}
+        onDrawn={(letter: string) =>
+          setLetters((ls) => ({ ...ls, team2: letter }))
+        }
         interactionsEnabled={canClick(Team.team2, onlineTeam)}
       />
-      {sortedTeams && (
+      {firstTeam && (
         <>
-          <p>
-            Ordre de passage:{" "}
-            {sortedTeams.map((t) => t[1].name as string).join(", ")}
-          </p>
-          <button
-            onClick={() =>
-              onAllPlayersSorted({
-                team1: teams.team1.name as string,
-                team2: teams.team2.name as string,
-                firstTeam: sortedTeams[0][0] as Team,
-              })
-            }
-          >
+          <p>Première équipe: {teamNames[firstTeam]}</p>
+          <button onClick={() => onAllPlayersSorted(firstTeam)}>
             Commencer !
           </button>
         </>

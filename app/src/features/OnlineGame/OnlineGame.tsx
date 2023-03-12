@@ -1,9 +1,9 @@
-import { teamsPresenceState } from "db/realtime";
+import { teamsNamesChanges, teamsPresenceState } from "db/realtime";
 import FirstPlayerDraw from "features/FirstPlayerDraw/FirstPlayerDraw";
 import Game from "features/game/Game/Game";
 import OnlineLobby from "features/OnlineLobby/OnlineLobby";
 import { useEffect, useMemo, useState } from "react";
-import { Team, TeamsToDefine } from "types";
+import { Team, Teams } from "types";
 import * as uuid from "uuid";
 
 export interface UserPayload {
@@ -17,17 +17,18 @@ interface Props {
 }
 
 function OnlineGame({ id }: Props) {
-  const [teamNames, setTeamNames] = useState<TeamsToDefine>();
+  const [teamNames, setTeamNames] = useState<Teams>({
+    team1: "Charme",
+    team2: "Ébène",
+  });
   const [onlineTeam, setOnlineTeam] = useState<Team | null>(null); // team of local player
+  const [firstTeam, setFirstTeam] = useState<Team>();
   const [name, setName] = useState<string>();
   const [users, setUsers] = useState<UserPayload[]>([]);
   const userId = useMemo(() => uuid.v4(), []);
   const gameIsOngoing = useMemo(() => {
     const teams = users.map((user) => user.team);
-    return (
-      teams.every((t) => t === Team.team1) ||
-      teams.every((t) => t === Team.team2)
-    );
+    return teams.includes(Team.team1) && teams.includes(Team.team2);
   }, [users]);
 
   useEffect(() => {
@@ -59,27 +60,52 @@ function OnlineGame({ id }: Props) {
     };
   }, [name, onlineTeam]);
 
+  useEffect(() => {
+    teamsNamesChanges({ gameId: id })
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "games",
+          filter: `id=eq.${id}`,
+        },
+        (teamsNamesPayload) => {
+          console.log(teamsNamesPayload);
+        }
+      )
+      .subscribe();
+    return () => {
+      teamsNamesChanges({ gameId: id }).unsubscribe();
+    };
+  }, []);
+
   return (
     <>
       <OnlineLobby
-        users={users}
         gameId={id}
+        users={users}
+        name={name}
         team={onlineTeam}
         teamNames={teamNames}
+        onlineTeam={onlineTeam}
+        setTeamNames={setTeamNames}
         setTeam={setOnlineTeam}
-        name={name}
         setName={setName}
       />
-      {name === undefined ? null : teamNames === undefined ? (
+      {name === undefined ? null : firstTeam === undefined ? (
         <FirstPlayerDraw
+          teamNames={teamNames}
           onlineTeam={onlineTeam}
-          onAllPlayersSorted={setTeamNames}
+          onAllPlayersSorted={setFirstTeam}
         />
-      ) : (
+      ) : gameIsOngoing && firstTeam ? (
         <Game
-          firstTeam={teamNames.firstTeam}
+          firstTeam={firstTeam}
           teamNames={{ team1: teamNames.team1, team2: teamNames.team2 }}
         />
+      ) : (
+        `Une équipe est vide`
       )}
     </>
   );

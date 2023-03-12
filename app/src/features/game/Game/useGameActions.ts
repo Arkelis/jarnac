@@ -1,6 +1,6 @@
 import { useBag } from "features/bag";
 import { useCallback, useEffect, useReducer } from "react";
-import { opponent, Team, Teams } from "types";
+import { opponent, Team } from "types";
 
 type Board = string[][];
 
