@@ -22,6 +22,7 @@ const canClick = (team: Team, onlineTeam?: Team | null) => {
 
 function FirstPlayerDraw({ teamNames, onAllPlayersSorted, onlineTeam }: Props) {
   const { draw } = useBag();
+  // TODO: Synchronize team letters with team names to select first team
   const [letters, setLetters] = useState<TeamLetters>({
     team1: undefined,
     team2: undefined,
