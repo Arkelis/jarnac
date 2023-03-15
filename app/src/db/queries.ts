@@ -12,7 +12,7 @@ export function useCreateGame({ onSuccess }: UseCreateGameParams) {
     mutationFn: async () => {
       const { data, error } = await supabase
         .from("games")
-        .insert([{}])
+        .insert([{ team_names: { team1: "Charme", team2: "Ébène" } }])
         .select("id")
         .single();
       if (error) throw error;
@@ -50,7 +50,7 @@ export function useFetchGame({ id }: UseFetchGameParams) {
 }
 
 export function useFetchTeamNames({ id }: UseFetchGameParams) {
-  return useQuery<Teams>({
+  return useQuery({
     queryKey: ["games", id, "team_names"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -60,7 +60,7 @@ export function useFetchTeamNames({ id }: UseFetchGameParams) {
         .limit(1)
         .single();
       if (error) throw error;
-      return data;
+      return data.team_names as Teams;
     },
     enabled: Boolean(id),
     retry: false,

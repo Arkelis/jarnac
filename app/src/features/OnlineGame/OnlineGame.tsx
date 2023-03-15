@@ -1,7 +1,9 @@
+import { useFetchTeamNames } from "db/queries";
 import { teamsNamesChanges, teamsPresenceState } from "db/realtime";
 import FirstPlayerDraw from "features/FirstPlayerDraw/FirstPlayerDraw";
 import Game from "features/game/Game/Game";
 import OnlineLobby from "features/OnlineLobby/OnlineLobby";
+import { isError } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { Team, Teams } from "types";
 import * as uuid from "uuid";
@@ -17,10 +19,12 @@ interface Props {
 }
 
 function OnlineGame({ id }: Props) {
-  const [teamNames, setTeamNames] = useState<Teams>({
-    team1: "Charme",
-    team2: "Ébène",
-  });
+  const {
+    data: teamNames,
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchTeamNames({ id });
   const [onlineTeam, setOnlineTeam] = useState<Team | null>(null); // team of local player
   const [firstTeam, setFirstTeam] = useState<Team>();
   const [name, setName] = useState<string>();
@@ -70,15 +74,16 @@ function OnlineGame({ id }: Props) {
           table: "games",
           filter: `id=eq.${id}`,
         },
-        (teamsNamesPayload) => {
-          console.log(teamsNamesPayload);
-        }
+        () => refetch()
       )
       .subscribe();
     return () => {
       teamsNamesChanges({ gameId: id }).unsubscribe();
     };
   }, []);
+
+  if (isLoading) return <p>Chargement...</p>;
+  if (isError) return <p>Erreur</p>;
 
   return (
     <>
@@ -89,7 +94,6 @@ function OnlineGame({ id }: Props) {
         team={onlineTeam}
         teamNames={teamNames}
         onlineTeam={onlineTeam}
-        setTeamNames={setTeamNames}
         setTeam={setOnlineTeam}
         setName={setName}
       />

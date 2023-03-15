@@ -13,7 +13,6 @@ interface Props {
   teamNames: Teams;
   setTeam: Dispatch<SetStateAction<Team | null>>;
   setName: Dispatch<SetStateAction<string | undefined>>;
-  setTeamNames: Dispatch<SetStateAction<Teams>>;
 }
 
 function OnlineLobby({
@@ -24,7 +23,6 @@ function OnlineLobby({
   teamNames,
   setTeam,
   setName,
-  setTeamNames,
 }: Props) {
   const gameUrl = `http://localhost:3000/en-ligne/${gameId}`;
   const teamOneNameRef = useRef<HTMLInputElement>(null);
@@ -43,11 +41,7 @@ function OnlineLobby({
       </ul>
       {teamNames.team1}
       <button onClick={() => setTeam(Team.team1)}>Rejoindre</button>
-      <input
-        disabled={onlineTeam !== Team.team1}
-        ref={teamOneNameRef}
-        defaultValue="Charme"
-      />
+      <input disabled={onlineTeam !== Team.team1} ref={teamOneNameRef} />
       <button
         disabled={onlineTeam !== Team.team1}
         onClick={() => {
@@ -55,8 +49,6 @@ function OnlineLobby({
             ...teamNames,
             team1: teamOneNameRef.current?.value || teamNames.team1,
           };
-          console.log(newTeams);
-          setTeamNames(newTeams);
           mutate(newTeams);
         }}
       >
@@ -69,11 +61,7 @@ function OnlineLobby({
       </ul>
       {teamNames.team2}
       <button onClick={() => setTeam(Team.team2)}>Rejoindre</button>
-      <input
-        disabled={onlineTeam !== Team.team2}
-        ref={teamTwoNameRef}
-        defaultValue="Ébène"
-      />
+      <input disabled={onlineTeam !== Team.team2} ref={teamTwoNameRef} />
       <button
         disabled={onlineTeam !== Team.team2}
         onClick={() => {
@@ -81,8 +69,6 @@ function OnlineLobby({
             ...teamNames,
             team2: teamTwoNameRef.current?.value || teamNames.team2,
           };
-          console.log(newTeams);
-          setTeamNames(newTeams);
           mutate(newTeams);
         }}
       >
