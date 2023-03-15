@@ -1,17 +1,13 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useBag } from "features/bag";
 import DrawLetter from "./DrawLetter";
-import { Team, Teams } from "types";
+import { Team, TeamsToDefine } from "types";
 
 interface Props {
-  teamNames: Teams;
+  teams: TeamsToDefine;
   onAllPlayersSorted: (firstTeam: Team) => void;
   onlineTeam?: Team | null;
-}
-
-interface TeamLetters {
-  team1?: string;
-  team2?: string;
+  onSetLetter: (team: Team) => (letter: string) => void;
 }
 
 const canClick = (team: Team, onlineTeam?: Team | null) => {
@@ -20,44 +16,40 @@ const canClick = (team: Team, onlineTeam?: Team | null) => {
   return team === onlineTeam;
 };
 
-function FirstPlayerDraw({ teamNames, onAllPlayersSorted, onlineTeam }: Props) {
+function FirstPlayerDraw({
+  teams,
+  onAllPlayersSorted,
+  onlineTeam,
+  onSetLetter,
+}: Props) {
   const { draw } = useBag();
-  // TODO: Synchronize team letters with team names to select first team
-  const [letters, setLetters] = useState<TeamLetters>({
-    team1: undefined,
-    team2: undefined,
-  });
 
   const firstTeam = useMemo(() => {
-    if (!letters.team1 || !letters.team2) return undefined;
-    return letters.team1.localeCompare(letters.team2) < 0
+    if (!teams.team1.letter || !teams.team2.letter) return undefined;
+    return teams.team1.letter.localeCompare(teams.team2.letter) < 0
       ? Team.team1
       : Team.team2;
-  }, [letters]);
+  }, [teams.team1.letter, teams.team2.letter]);
 
   return (
     <>
       <DrawLetter
         key={1}
-        name={teamNames.team1}
+        name={teams.team1.name}
         draw={draw}
-        onDrawn={(letter: string) =>
-          setLetters((ls) => ({ ...ls, team1: letter }))
-        }
+        onDrawn={onSetLetter(Team.team1)}
         interactionsEnabled={canClick(Team.team1, onlineTeam)}
       />
       <DrawLetter
         key={2}
-        name={teamNames.team2}
+        name={teams.team2.name}
         draw={draw}
-        onDrawn={(letter: string) =>
-          setLetters((ls) => ({ ...ls, team2: letter }))
-        }
+        onDrawn={onSetLetter(Team.team2)}
         interactionsEnabled={canClick(Team.team2, onlineTeam)}
       />
       {firstTeam && (
         <>
-          <p>Première équipe: {teamNames[firstTeam]}</p>
+          <p>Première équipe: {teams[firstTeam].name}</p>
           <button onClick={() => onAllPlayersSorted(firstTeam)}>
             Commencer !
           </button>

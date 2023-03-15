@@ -1,7 +1,12 @@
+interface TeamDefinition {
+  name: string;
+  letter?: string;
+}
+
 export interface TeamsToDefine {
-  team1: string;
-  team2: string;
-  firstTeam: Team;
+  team1: TeamDefinition;
+  team2: TeamDefinition;
+  firstTeam?: Team;
 }
 
 export interface Teams {

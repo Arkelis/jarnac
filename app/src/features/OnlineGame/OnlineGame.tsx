@@ -20,7 +20,7 @@ interface Props {
 
 function OnlineGame({ id }: Props) {
   const {
-    data: teamNames,
+    data: teams,
     isLoading,
     isError,
     refetch,
@@ -85,6 +85,8 @@ function OnlineGame({ id }: Props) {
   if (isLoading) return <p>Chargement...</p>;
   if (isError) return <p>Erreur</p>;
 
+  const teamNames = { team1: teams.team1.name, team2: teams.team2.name };
+
   return (
     <>
       <OnlineLobby
@@ -99,9 +101,10 @@ function OnlineGame({ id }: Props) {
       />
       {name === undefined ? null : firstTeam === undefined ? (
         <FirstPlayerDraw
-          teamNames={teamNames}
+          teams={teams}
           onlineTeam={onlineTeam}
           onAllPlayersSorted={setFirstTeam}
+          onSetLetter={}
         />
       ) : gameIsOngoing && firstTeam ? (
         <Game

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { GameState } from "features/game/Game/useGameActions";
 import { supabase } from "db/client";
-import { Teams } from "types";
+import { Teams, TeamsToDefine } from "types";
 
 interface UseCreateGameParams {
   onSuccess: (id: string) => void;
@@ -12,7 +12,14 @@ export function useCreateGame({ onSuccess }: UseCreateGameParams) {
     mutationFn: async () => {
       const { data, error } = await supabase
         .from("games")
-        .insert([{ team_names: { team1: "Charme", team2: "Ébène" } }])
+        .insert([
+          {
+            team_names: {
+              team1: { name: "Charme" },
+              team2: { name: "Ébène" },
+            },
+          },
+        ])
         .select("id")
         .single();
       if (error) throw error;
@@ -60,7 +67,7 @@ export function useFetchTeamNames({ id }: UseFetchGameParams) {
         .limit(1)
         .single();
       if (error) throw error;
-      return data.team_names as Teams;
+      return data.team_names as TeamsToDefine;
     },
     enabled: Boolean(id),
     retry: false,
