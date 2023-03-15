@@ -104,7 +104,7 @@ function OnlineGame({ id }: Props) {
           teams={teams}
           onlineTeam={onlineTeam}
           onAllPlayersSorted={setFirstTeam}
-          onSetLetter={}
+          onSetLetter={} // TODO: mutation to update letter
         />
       ) : gameIsOngoing && firstTeam ? (
         <Game
