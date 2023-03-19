@@ -65,7 +65,7 @@ function OnlineGame({ gameId }: Props) {
           onSetLetter={updateTeamLetter}
         />
       ) : gameIsOngoing && firstTeam ? (
-        <Game
+        <Game // TODO: Sync game state
           firstTeam={firstTeam}
           teamNames={{ team1: teamNames.team1, team2: teamNames.team2 }}
         />
