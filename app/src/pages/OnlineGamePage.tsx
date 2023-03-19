@@ -9,7 +9,7 @@ function OnlineGamePage() {
   if (isInitialLoading) return <p>Chargement en cours</p>;
   if (data === undefined) return <Navigate to="/" />;
 
-  return <OnlineGame id={data.id} />;
+  return <OnlineGame gameId={data.id} />;
 }
 
 export default OnlineGamePage;

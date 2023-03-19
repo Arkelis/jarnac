@@ -19,7 +19,7 @@ function OnlineGame({ gameId }: Props) {
   const [name, setName] = useState<string>();
   const [onlineTeam, setOnlineTeam] = useState<Team | null>(null); // team of local player
   const [users, setUsers] = useState<UserPayload[]>([]);
-  useTeamsPresence({ gameId, setUsers, onlineTeam });
+  useTeamsPresence({ name, gameId, setUsers, onlineTeam });
 
   // Team names and order definition
   const {

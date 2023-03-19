@@ -1,7 +1,7 @@
 import EnterName from "./EnterName";
 import { Team, Teams } from "types";
-import { UserPayload } from "features/OnlineGame/OnlineGame";
 import { Dispatch, SetStateAction, useRef } from "react";
+import { UserPayload } from "db/realtime";
 
 interface Props {
   gameId: string;
