@@ -35,6 +35,7 @@ function FirstPlayerDraw({
     <>
       <DrawLetter
         key={1}
+        letter={teams.team1.letter}
         name={teams.team1.name}
         draw={draw}
         onDrawn={onSetLetter(Team.team1)}
@@ -42,6 +43,7 @@ function FirstPlayerDraw({
       />
       <DrawLetter
         key={2}
+        letter={teams.team2.letter}
         name={teams.team2.name}
         draw={draw}
         onDrawn={onSetLetter(Team.team2)}

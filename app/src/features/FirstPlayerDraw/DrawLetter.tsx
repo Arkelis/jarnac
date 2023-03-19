@@ -1,27 +1,23 @@
-import { useState } from "react";
-
 interface Props {
   name: string;
+  letter?: string;
   draw: () => string;
   onDrawn: (letter: string) => void;
   interactionsEnabled: boolean;
 }
 
-function DrawLetter({ name, draw, onDrawn, interactionsEnabled }: Props) {
-  const [letter, setLetter] = useState<string>();
-
+function DrawLetter({
+  name,
+  letter,
+  draw,
+  onDrawn,
+  interactionsEnabled,
+}: Props) {
   if (letter === undefined) {
     return (
       <>
         <p>Equipe {name}, tirez une lettre !</p>
-        <button
-          disabled={!interactionsEnabled}
-          onClick={() => {
-            const newLetter = draw();
-            setLetter(newLetter);
-            onDrawn(newLetter);
-          }}
-        >
+        <button disabled={!interactionsEnabled} onClick={() => onDrawn(draw())}>
           Tirer !
         </button>
       </>

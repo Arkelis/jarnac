@@ -2,7 +2,6 @@ import EnterName from "./EnterName";
 import { Team, Teams } from "types";
 import { UserPayload } from "features/OnlineGame/OnlineGame";
 import { Dispatch, SetStateAction, useRef } from "react";
-import { useUpdateTeamNames } from "db/queries";
 
 interface Props {
   gameId: string;
@@ -13,6 +12,7 @@ interface Props {
   teamNames: Teams;
   setTeam: Dispatch<SetStateAction<Team | null>>;
   setName: Dispatch<SetStateAction<string | undefined>>;
+  onTeamNameChange: (params: { team: Team; name: string }) => void;
 }
 
 function OnlineLobby({
@@ -23,11 +23,12 @@ function OnlineLobby({
   teamNames,
   setTeam,
   setName,
+  onTeamNameChange,
 }: Props) {
   const gameUrl = `http://localhost:3000/en-ligne/${gameId}`;
   const teamOneNameRef = useRef<HTMLInputElement>(null);
   const teamTwoNameRef = useRef<HTMLInputElement>(null);
-  const { mutate } = useUpdateTeamNames({ id: gameId });
+  const { team1, team2 } = teamNames;
 
   if (name === undefined) return <EnterName onSubmitName={setName} />;
   return (
@@ -39,18 +40,17 @@ function OnlineLobby({
           team === undefined ? <li key={id}>{name}</li> : null
         )}
       </ul>
-      {teamNames.team1}
+      {team1}
       <button onClick={() => setTeam(Team.team1)}>Rejoindre</button>
       <input disabled={onlineTeam !== Team.team1} ref={teamOneNameRef} />
       <button
         disabled={onlineTeam !== Team.team1}
-        onClick={() => {
-          const newTeams = {
-            ...teamNames,
-            team1: teamOneNameRef.current?.value || teamNames.team1,
-          };
-          mutate(newTeams);
-        }}
+        onClick={() =>
+          onTeamNameChange({
+            team: Team.team1,
+            name: teamOneNameRef.current?.value || team1,
+          })
+        }
       >
         Changer le nom
       </button>
@@ -59,18 +59,17 @@ function OnlineLobby({
           team === Team.team1 ? <li key={id}>{name}</li> : null
         )}
       </ul>
-      {teamNames.team2}
+      {team2}
       <button onClick={() => setTeam(Team.team2)}>Rejoindre</button>
       <input disabled={onlineTeam !== Team.team2} ref={teamTwoNameRef} />
       <button
         disabled={onlineTeam !== Team.team2}
-        onClick={() => {
-          const newTeams = {
-            ...teamNames,
-            team2: teamTwoNameRef.current?.value || teamNames.team2,
-          };
-          mutate(newTeams);
-        }}
+        onClick={() =>
+          onTeamNameChange({
+            team: Team.team2,
+            name: teamTwoNameRef.current?.value || team2,
+          })
+        }
       >
         Changer le nom
       </button>

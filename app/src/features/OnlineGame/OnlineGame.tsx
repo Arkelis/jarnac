@@ -1,11 +1,10 @@
-import { useFetchTeamNames } from "db/queries";
+import { useFetchTeamNames, useUpdateTeamNames } from "db/queries";
 import { teamsNamesChanges, teamsPresenceState } from "db/realtime";
 import FirstPlayerDraw from "features/FirstPlayerDraw/FirstPlayerDraw";
 import Game from "features/game/Game/Game";
 import OnlineLobby from "features/OnlineLobby/OnlineLobby";
-import { isError } from "lodash";
-import { useEffect, useMemo, useState } from "react";
-import { Team, Teams } from "types";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Team } from "types";
 import * as uuid from "uuid";
 
 export interface UserPayload {
@@ -25,8 +24,8 @@ function OnlineGame({ id }: Props) {
     isError,
     refetch,
   } = useFetchTeamNames({ id });
+  const { mutate: updateTeams } = useUpdateTeamNames({ id });
   const [onlineTeam, setOnlineTeam] = useState<Team | null>(null); // team of local player
-  const [firstTeam, setFirstTeam] = useState<Team>();
   const [name, setName] = useState<string>();
   const [users, setUsers] = useState<UserPayload[]>([]);
   const userId = useMemo(() => uuid.v4(), []);
@@ -34,6 +33,30 @@ function OnlineGame({ id }: Props) {
     const teams = users.map((user) => user.team);
     return teams.includes(Team.team1) && teams.includes(Team.team2);
   }, [users]);
+
+  const updateTeamLetter = useCallback(
+    (team: Team) => (letter: string) => {
+      if (!teams) return;
+      updateTeams({ ...teams, [team]: { ...teams[team], letter } });
+    },
+    [teams, updateTeams]
+  );
+
+  const updateTeamName = useCallback(
+    ({ team, name }: { team: Team; name: string }) => {
+      if (!teams) return;
+      updateTeams({ ...teams, [team]: { ...teams[team], name } });
+    },
+    [teams]
+  );
+
+  const updateFirstTeam = useCallback(
+    (team: Team) => {
+      if (!teams) return;
+      updateTeams({ ...teams, firstTeam: team });
+    },
+    [teams]
+  );
 
   useEffect(() => {
     if (name === undefined) return;
@@ -86,6 +109,7 @@ function OnlineGame({ id }: Props) {
   if (isError) return <p>Erreur</p>;
 
   const teamNames = { team1: teams.team1.name, team2: teams.team2.name };
+  const firstTeam = teams.firstTeam;
 
   return (
     <>
@@ -98,13 +122,14 @@ function OnlineGame({ id }: Props) {
         onlineTeam={onlineTeam}
         setTeam={setOnlineTeam}
         setName={setName}
+        onTeamNameChange={updateTeamName}
       />
       {name === undefined ? null : firstTeam === undefined ? (
         <FirstPlayerDraw
           teams={teams}
           onlineTeam={onlineTeam}
-          onAllPlayersSorted={setFirstTeam}
-          onSetLetter={} // TODO: mutation to update letter
+          onAllPlayersSorted={updateFirstTeam}
+          onSetLetter={updateTeamLetter}
         />
       ) : gameIsOngoing && firstTeam ? (
         <Game

@@ -80,7 +80,7 @@ interface UseUpdateTeamNamesParam {
 
 export function useUpdateTeamNames({ id }: UseUpdateTeamNamesParam) {
   return useMutation({
-    mutationFn: async (teamNames: Teams) => {
+    mutationFn: async (teamNames: TeamsToDefine) => {
       const { data, error } = await supabase
         .from("games")
         .update({ team_names: teamNames })
