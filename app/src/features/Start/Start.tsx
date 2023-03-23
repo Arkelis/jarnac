@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import CreateNewOnlineGame from "features/CreateNewOnlineGame/CreateNewOnlineGame";
+import { useState } from "react"
+import { Link } from "react-router-dom"
+import CreateNewOnlineGame from "features/CreateNewOnlineGame/CreateNewOnlineGame"
 
 interface Props {
-  localGamePath: string;
-  onGameCreated: (id: string) => void;
+  localGamePath: string
+  onGameCreated: (id: string) => void
 }
 
 function Start({ localGamePath, onGameCreated }: Props) {
-  const [isCreatingGame, setIsCreatingGame] = useState(false);
+  const [isCreatingGame, setIsCreatingGame] = useState(false)
 
   return (
     <ul>
@@ -29,7 +29,7 @@ function Start({ localGamePath, onGameCreated }: Props) {
         <button>Rejoindre une partie en ligne</button>
       </li>
     </ul>
-  );
+  )
 }
 
-export default Start;
+export default Start

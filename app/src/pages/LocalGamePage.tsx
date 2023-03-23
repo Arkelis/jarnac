@@ -1,7 +1,7 @@
-import OfflineGame from "features/OfflineGame/OfflineGame";
+import OfflineGame from "features/OfflineGame/OfflineGame"
 
 function LocalGamePage() {
-  return <OfflineGame />;
+  return <OfflineGame />
 }
 
-export default LocalGamePage;
+export default LocalGamePage

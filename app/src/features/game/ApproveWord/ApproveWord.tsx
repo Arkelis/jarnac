@@ -1,7 +1,7 @@
 interface Props {
-  word: string[];
-  approveWord: () => void;
-  refuseWord: () => void;
+  word: string[]
+  approveWord: () => void
+  refuseWord: () => void
 }
 
 function ApproveWord({ word, approveWord, refuseWord }: Props) {
@@ -11,7 +11,7 @@ function ApproveWord({ word, approveWord, refuseWord }: Props) {
       <button onClick={approveWord}>Approuver</button>
       <button onClick={refuseWord}>Refuser</button>
     </div>
-  );
+  )
 }
 
-export default ApproveWord;
+export default ApproveWord

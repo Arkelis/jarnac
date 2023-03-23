@@ -1,40 +1,40 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from "react"
 
 interface Props {
-  letters: string[];
-  onCancel: () => void;
-  onConfirm: (letters: string[]) => void;
+  letters: string[]
+  onCancel: () => void
+  onConfirm: (letters: string[]) => void
 }
 
 function SwapLetters({ letters, onConfirm, onCancel }: Props) {
-  const [lettersToSwap, setLettersToSwap] = useState<string[]>([]);
-  const [lettersToKeep, setLettersToKeep] = useState(letters);
-  const cannotSelectOtherLetters = lettersToSwap.length === 3;
-  const cannotApproveSwap = lettersToSwap.length < 3;
+  const [lettersToSwap, setLettersToSwap] = useState<string[]>([])
+  const [lettersToKeep, setLettersToKeep] = useState(letters)
+  const cannotSelectOtherLetters = lettersToSwap.length === 3
+  const cannotApproveSwap = lettersToSwap.length < 3
 
   const change = useCallback(
     (letter: string, idx: number) => () => {
-      setLettersToSwap((ls) => [...ls, letter]);
+      setLettersToSwap((ls) => [...ls, letter])
       setLettersToKeep((ls) => {
-        const newLetters = [...ls];
-        newLetters.splice(idx, 1);
-        return newLetters;
-      });
+        const newLetters = [...ls]
+        newLetters.splice(idx, 1)
+        return newLetters
+      })
     },
     []
-  );
+  )
 
   const keep = useCallback(
     (letter: string, idx: number) => () => {
       setLettersToSwap((ls) => {
-        const newLetters = [...ls];
-        newLetters.splice(idx, 1);
-        return newLetters;
-      });
-      setLettersToKeep((ls) => [...ls, letter]);
+        const newLetters = [...ls]
+        newLetters.splice(idx, 1)
+        return newLetters
+      })
+      setLettersToKeep((ls) => [...ls, letter])
     },
     []
-  );
+  )
 
   return (
     <div>
@@ -63,7 +63,7 @@ function SwapLetters({ letters, onConfirm, onCancel }: Props) {
       </button>
       <button onClick={onCancel}>Annuler</button>
     </div>
-  );
+  )
 }
 
-export default SwapLetters;
+export default SwapLetters

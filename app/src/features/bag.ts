@@ -1,9 +1,9 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from "react"
 
-export type Bag = string[];
+export type Bag = string[]
 
 function randomInt(max: number) {
-  return Math.floor(Math.random() * max);
+  return Math.floor(Math.random() * max)
 }
 
 function initialBag() {
@@ -33,49 +33,49 @@ function initialBag() {
     .concat(Array(1).fill("W"))
     .concat(Array(1).fill("X"))
     .concat(Array(1).fill("Y"))
-    .concat(Array(2).fill("Z"));
+    .concat(Array(2).fill("Z"))
 }
 
 function takeALetter(bag: Bag) {
   if (bag.length === 0) {
-    throw new TypeError("Bag is empty");
+    throw new TypeError("Bag is empty")
   }
-  const newBag = [...bag];
-  const letter = newBag.splice(randomInt(newBag.length), 1).at(0) as string;
-  return { newBag, letter };
+  const newBag = [...bag]
+  const letter = newBag.splice(randomInt(newBag.length), 1).at(0) as string
+  return { newBag, letter }
 }
 
 function swapThreeLetters(bag: Bag, letters: string[]) {
   if (bag.length < 3) {
-    throw new TypeError("Bag has less than 3 letters");
+    throw new TypeError("Bag has less than 3 letters")
   }
-  const newBag = [...bag];
+  const newBag = [...bag]
   const newLetters = Array(3)
     .fill(undefined)
     .map(() => newBag.splice(randomInt(newBag.length), 1))
-    .flat();
-  return { newBag: [...newBag, ...letters], newLetters };
+    .flat()
+  return { newBag: [...newBag, ...letters], newLetters }
 }
 
 export function useBag() {
-  const [bag, setBag] = useState(initialBag());
+  const [bag, setBag] = useState(initialBag())
   const draw = useCallback(() => {
-    const { newBag, letter } = takeALetter(bag);
-    setBag(newBag);
-    return letter;
-  }, [bag]);
+    const { newBag, letter } = takeALetter(bag)
+    setBag(newBag)
+    return letter
+  }, [bag])
   const swapThree = useCallback(
     (letters: string[]) => {
-      const { newBag, newLetters } = swapThreeLetters(bag, letters);
-      setBag(newBag);
-      return newLetters;
+      const { newBag, newLetters } = swapThreeLetters(bag, letters)
+      setBag(newBag)
+      return newLetters
     },
     [bag]
-  );
+  )
   const discard = useCallback(
     (letter?: string) => setBag((bag) => (letter ? [...bag, letter] : bag)),
     []
-  );
+  )
 
-  return { bag, draw, discard, swapThree };
+  return { bag, draw, discard, swapThree }
 }

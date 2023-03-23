@@ -1,18 +1,18 @@
-import EnterName from "./EnterName";
-import { Team, Teams } from "types";
-import { Dispatch, SetStateAction, useRef } from "react";
-import { UserPayload } from "db/realtime";
+import EnterName from "./EnterName"
+import { Team, Teams } from "types"
+import { Dispatch, SetStateAction, useRef } from "react"
+import { UserPayload } from "db/realtime"
 
 interface Props {
-  gameId: string;
-  users: UserPayload[];
-  name?: string;
-  team: Team | null;
-  onlineTeam: Team | null;
-  teamNames: Teams;
-  setTeam: Dispatch<SetStateAction<Team | null>>;
-  setName: Dispatch<SetStateAction<string | undefined>>;
-  onTeamNameChange: (params: { team: Team; name: string }) => void;
+  gameId: string
+  users: UserPayload[]
+  name?: string
+  team: Team | null
+  onlineTeam: Team | null
+  teamNames: Teams
+  setTeam: Dispatch<SetStateAction<Team | null>>
+  setName: Dispatch<SetStateAction<string | undefined>>
+  onTeamNameChange: (params: { team: Team; name: string }) => void
 }
 
 function OnlineLobby({
@@ -25,12 +25,12 @@ function OnlineLobby({
   setName,
   onTeamNameChange,
 }: Props) {
-  const gameUrl = `http://localhost:3000/en-ligne/${gameId}`;
-  const teamOneNameRef = useRef<HTMLInputElement>(null);
-  const teamTwoNameRef = useRef<HTMLInputElement>(null);
-  const { team1, team2 } = teamNames;
+  const gameUrl = `http://localhost:3000/en-ligne/${gameId}`
+  const teamOneNameRef = useRef<HTMLInputElement>(null)
+  const teamTwoNameRef = useRef<HTMLInputElement>(null)
+  const { team1, team2 } = teamNames
 
-  if (name === undefined) return <EnterName onSubmitName={setName} />;
+  if (name === undefined) return <EnterName onSubmitName={setName} />
   return (
     <div>
       <h1>Équipes</h1>
@@ -74,7 +74,7 @@ function OnlineLobby({
       </ul>
       <p>Copiez ce lien pour inviter vos amis dans la partie : {gameUrl}</p>
     </div>
-  );
+  )
 }
 
-export default OnlineLobby;
+export default OnlineLobby

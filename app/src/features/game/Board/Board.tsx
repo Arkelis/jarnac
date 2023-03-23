@@ -1,7 +1,7 @@
 interface Props {
-  lines: string[][];
-  lineMustBeChosen: boolean;
-  onLineChoice: (idx: number) => void;
+  lines: string[][]
+  lineMustBeChosen: boolean
+  onLineChoice: (idx: number) => void
 }
 
 function Board({ lines, lineMustBeChosen, onLineChoice }: Props) {
@@ -18,7 +18,7 @@ function Board({ lines, lineMustBeChosen, onLineChoice }: Props) {
           </li>
         ))}
     </ul>
-  );
+  )
 }
 
-export default Board;
+export default Board

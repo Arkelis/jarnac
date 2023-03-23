@@ -1,15 +1,15 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef } from "react"
 
 interface Props {
-  onSubmitName: (name: string) => void;
+  onSubmitName: (name: string) => void
 }
 
 function EnterName({ onSubmitName }: Props) {
-  const nameInputRef = useRef<HTMLInputElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null)
   const handleSubmit = useCallback(() => {
-    if (!nameInputRef.current) return;
-    onSubmitName(nameInputRef.current.value);
-  }, []);
+    if (!nameInputRef.current) return
+    onSubmitName(nameInputRef.current.value)
+  }, [])
 
   return (
     <>
@@ -19,7 +19,7 @@ function EnterName({ onSubmitName }: Props) {
         <button onClick={handleSubmit}>Valider</button>
       </form>
     </>
-  );
+  )
 }
 
-export default EnterName;
+export default EnterName

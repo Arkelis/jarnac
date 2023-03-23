@@ -1,15 +1,15 @@
-import ApproveWord from "features/game/ApproveWord/ApproveWord";
-import Board from "features/game/Board/Board";
-import { ActionType, GameActions, GameState } from "features/game/Game/useGameActions";
-import MakeAWord from "features/game/MakeAWord/MakeAWord";
-import SwapLettersSection from "features/game/SwapLetters/SwapLettersSection";
-import { useCallback, useState } from "react";
-import { opponent, Team } from "types";
-import { useLineChoice } from "./useLineChoice";
+import ApproveWord from "features/game/ApproveWord/ApproveWord"
+import Board from "features/game/Board/Board"
+import { ActionType, GameActions, GameState } from "features/game/Game/useGameActions"
+import MakeAWord from "features/game/MakeAWord/MakeAWord"
+import SwapLettersSection from "features/game/SwapLetters/SwapLettersSection"
+import { useCallback, useState } from "react"
+import { opponent, Team } from "types"
+import { useLineChoice } from "./useLineChoice"
 
 interface Props extends GameActions {
-  team: Team;
-  gameState: GameState;
+  team: Team
+  gameState: GameState
 }
 
 function Set({
@@ -27,31 +27,31 @@ function Set({
   pass,
 }: Props) {
   const { chosenLine, lineMustBeChosen, setDefaultLineChoiceOrAsk, handleLineChoice, resetChosenLine } =
-    useLineChoice();
-  const [isMakingAWord, setIsMakingAWord] = useState(false);
-  const [isMakingJarnac, setIsMakingJarnac] = useState(false);
-  const [isInitiated, setIsInitiated] = useState(false);
+    useLineChoice()
+  const [isMakingAWord, setIsMakingAWord] = useState(false)
+  const [isMakingJarnac, setIsMakingJarnac] = useState(false)
+  const [isInitiated, setIsInitiated] = useState(false)
 
-  const { pendingWord } = gameState;
-  const { name, possibleActions } = gameState[team];
-  const { board: lines, letters } = gameState[isMakingJarnac ? opponent(team) : team];
+  const { pendingWord } = gameState
+  const { name, possibleActions } = gameState[team]
+  const { board: lines, letters } = gameState[isMakingJarnac ? opponent(team) : team]
 
-  console.log(lines);
+  console.log(lines)
 
   const initiateSet = useCallback(() => {
-    init();
-    setIsInitiated(true);
-  }, []);
+    init()
+    setIsInitiated(true)
+  }, [])
 
   const prepareMakeAWord = useCallback(() => {
-    setIsMakingAWord(true);
-    setDefaultLineChoiceOrAsk(lines);
-  }, [lines]);
+    setIsMakingAWord(true)
+    setDefaultLineChoiceOrAsk(lines)
+  }, [lines])
 
   const prepareJarnac = () => {
-    setIsMakingJarnac(true);
-    setDefaultLineChoiceOrAsk(gameState[opponent(team)].board);
-  };
+    setIsMakingJarnac(true)
+    setDefaultLineChoiceOrAsk(gameState[opponent(team)].board)
+  }
 
   return (
     <div>
@@ -95,13 +95,13 @@ function Set({
           letters={letters}
           line={lines.at(chosenLine) || []}
           onConfirm={(word: string[], otherLetters: string[]) => {
-            proposeWord({ word, lineIndex: chosenLine, otherLetters });
-            setIsMakingAWord(false);
-            resetChosenLine();
+            proposeWord({ word, lineIndex: chosenLine, otherLetters })
+            setIsMakingAWord(false)
+            resetChosenLine()
           }}
           onCancel={() => {
-            setIsMakingAWord(false);
-            resetChosenLine();
+            setIsMakingAWord(false)
+            resetChosenLine()
           }}
         />
       )}
@@ -110,13 +110,13 @@ function Set({
           letters={letters}
           line={lines.at(chosenLine) || []}
           onConfirm={(word: string[], otherLetters: string[]) => {
-            proposeJarnac({ word, lineIndex: chosenLine, otherLetters });
-            setIsMakingJarnac(false);
-            resetChosenLine();
+            proposeJarnac({ word, lineIndex: chosenLine, otherLetters })
+            setIsMakingJarnac(false)
+            resetChosenLine()
           }}
           onCancel={() => {
-            setIsMakingJarnac(false);
-            resetChosenLine();
+            setIsMakingJarnac(false)
+            resetChosenLine()
           }}
         />
       )}
@@ -127,7 +127,7 @@ function Set({
         <ApproveWord approveWord={approveJarnac} refuseWord={refuseJarnac} word={pendingWord.word} />
       )}
     </div>
-  );
+  )
 }
 
-export default Set;
+export default Set

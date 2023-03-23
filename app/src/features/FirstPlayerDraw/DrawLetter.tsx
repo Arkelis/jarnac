@@ -1,9 +1,9 @@
 interface Props {
-  name: string;
-  letter?: string;
-  draw: () => string;
-  onDrawn: (letter: string) => void;
-  interactionsEnabled: boolean;
+  name: string
+  letter?: string
+  draw: () => string
+  onDrawn: (letter: string) => void
+  interactionsEnabled: boolean
 }
 
 function DrawLetter({ name, letter, draw, onDrawn, interactionsEnabled }: Props) {
@@ -15,7 +15,7 @@ function DrawLetter({ name, letter, draw, onDrawn, interactionsEnabled }: Props)
           Tirer !
         </button>
       </>
-    );
+    )
   }
 
   return (
@@ -24,7 +24,7 @@ function DrawLetter({ name, letter, draw, onDrawn, interactionsEnabled }: Props)
         Équipe {name}, votre lettre est <strong>{letter}</strong>
       </p>
     </>
-  );
+  )
 }
 
-export default DrawLetter;
+export default DrawLetter

@@ -1,28 +1,28 @@
-import { useMemo } from "react";
-import { useBag } from "features/bag";
-import DrawLetter from "./DrawLetter";
-import { Team, TeamsToDefine } from "types";
+import { useMemo } from "react"
+import { useBag } from "features/bag"
+import DrawLetter from "./DrawLetter"
+import { Team, TeamsToDefine } from "types"
 
 interface Props {
-  teams: TeamsToDefine;
-  onAllPlayersSorted: (firstTeam: Team) => void;
-  onlineTeam?: Team | null;
-  onSetLetter: (team: Team) => (letter: string) => void;
+  teams: TeamsToDefine
+  onAllPlayersSorted: (firstTeam: Team) => void
+  onlineTeam?: Team | null
+  onSetLetter: (team: Team) => (letter: string) => void
 }
 
 const canClick = (team: Team, onlineTeam?: Team | null) => {
-  if (onlineTeam === undefined) return true;
-  if (onlineTeam === null) return false;
-  return team === onlineTeam;
-};
+  if (onlineTeam === undefined) return true
+  if (onlineTeam === null) return false
+  return team === onlineTeam
+}
 
 function FirstPlayerDraw({ teams, onAllPlayersSorted, onlineTeam, onSetLetter }: Props) {
-  const { draw } = useBag();
+  const { draw } = useBag()
 
   const firstTeam = useMemo(() => {
-    if (!teams.team1.letter || !teams.team2.letter) return undefined;
-    return teams.team1.letter.localeCompare(teams.team2.letter) < 0 ? Team.team1 : Team.team2;
-  }, [teams.team1.letter, teams.team2.letter]);
+    if (!teams.team1.letter || !teams.team2.letter) return undefined
+    return teams.team1.letter.localeCompare(teams.team2.letter) < 0 ? Team.team1 : Team.team2
+  }, [teams.team1.letter, teams.team2.letter])
 
   return (
     <>
@@ -49,7 +49,7 @@ function FirstPlayerDraw({ teams, onAllPlayersSorted, onlineTeam, onSetLetter }:
         </>
       )}
     </>
-  );
+  )
 }
 
-export default FirstPlayerDraw;
+export default FirstPlayerDraw

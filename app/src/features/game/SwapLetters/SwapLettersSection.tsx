@@ -1,16 +1,16 @@
-import { ActionType } from "features/game/Game/useGameActions";
-import { useState } from "react";
-import SwapLetters from "./SwapLetters";
+import { ActionType } from "features/game/Game/useGameActions"
+import { useState } from "react"
+import SwapLetters from "./SwapLetters"
 
 interface Props {
-  letters: string[];
-  onConfirmSwap: (letters: string[]) => void;
-  possibleActions: ActionType[];
-  isInitiated: boolean;
+  letters: string[]
+  onConfirmSwap: (letters: string[]) => void
+  possibleActions: ActionType[]
+  isInitiated: boolean
 }
 
 function SwapLettersSection({ letters, onConfirmSwap, possibleActions, isInitiated }: Props) {
-  const [isSwappingLetters, setIsSwappingLetters] = useState(false);
+  const [isSwappingLetters, setIsSwappingLetters] = useState(false)
 
   return (
     <>
@@ -21,16 +21,16 @@ function SwapLettersSection({ letters, onConfirmSwap, possibleActions, isInitiat
         <SwapLetters
           letters={letters}
           onConfirm={(letters) => {
-            setIsSwappingLetters(false);
-            onConfirmSwap(letters);
+            setIsSwappingLetters(false)
+            onConfirmSwap(letters)
           }}
           onCancel={() => {
-            setIsSwappingLetters(false);
+            setIsSwappingLetters(false)
           }}
         />
       )}
     </>
-  );
+  )
 }
 
-export default SwapLettersSection;
+export default SwapLettersSection

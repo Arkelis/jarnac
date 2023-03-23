@@ -1,17 +1,17 @@
 interface TeamDefinition {
-  name: string;
-  letter?: string;
+  name: string
+  letter?: string
 }
 
 export interface TeamsToDefine {
-  team1: TeamDefinition;
-  team2: TeamDefinition;
-  firstTeam?: Team;
+  team1: TeamDefinition
+  team2: TeamDefinition
+  firstTeam?: Team
 }
 
 export interface Teams {
-  team1: string;
-  team2: string;
+  team1: string
+  team2: string
 }
 
 export enum Team {
@@ -20,5 +20,5 @@ export enum Team {
 }
 
 export function opponent(t: Team): Team {
-  return t == Team.team1 ? Team.team2 : Team.team1;
+  return t == Team.team1 ? Team.team2 : Team.team1
 }
