@@ -166,6 +166,7 @@ interface Params {
   team1: string
   team2: string
   firstTeam: Team
+  online: boolean
 }
 
 function initialGame({ team1, team2, firstTeam }: Params): GameState {
@@ -204,11 +205,10 @@ export function useGameActions({
   team1,
   team2,
   firstTeam,
+  online = false,
 }: Params): { gameState: GameState } & GameActions {
-  const { bag, draw, discard, swapThree } = useBag()
-  const [gameState, dispatch] = useReducer(gameReducer, { team1, team2, firstTeam }, initialGame)
-
-  console.log(firstTeam)
+  const { bag, draw, discard, swapThree } = useBag({ online })
+  const [gameState, dispatch] = useReducer(gameReducer, { team1, team2, firstTeam, online }, initialGame)
 
   const init = useCallback(() => {
     const letters = Array(6).fill(undefined).map(draw)
@@ -249,23 +249,17 @@ export function useGameActions({
   }, [])
 
   const pass = useCallback(() => dispatch({ type: ActionType.pass }), [])
-
   const proposeWord = useCallback(
     (wordProposition: PendingWord) => dispatch({ type: ActionType.proposeWord, wordProposition }),
     []
   )
-
   const proposeJarnac = useCallback(
     (wordProposition: PendingWord) => dispatch({ type: ActionType.proposeJarnac, wordProposition }),
     []
   )
-
   const approveWord = useCallback(() => dispatch({ type: ActionType.approveWord }), [])
-
   const refuseWord = useCallback(() => dispatch({ type: ActionType.refuseWord }), [])
-
   const approveJarnac = useCallback(() => dispatch({ type: ActionType.approveJarnac }), [])
-
   const refuseJarnac = useCallback(() => dispatch({ type: ActionType.refuseJarnac }), [])
 
   return {
