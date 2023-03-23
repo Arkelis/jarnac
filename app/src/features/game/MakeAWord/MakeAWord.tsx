@@ -64,10 +64,7 @@ function MakeAWord({ letters, line, onConfirm, onCancel }: Props) {
           </button>
         ))}
       </p>
-      <button
-        disabled={!canConfirm}
-        onClick={() => onConfirm(word, otherLetters)}
-      >
+      <button disabled={!canConfirm} onClick={() => onConfirm(word, otherLetters)}>
         Valider
       </button>
       <button onClick={onCancel}>Annuler</button>

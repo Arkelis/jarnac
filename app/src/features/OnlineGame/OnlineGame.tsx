@@ -1,9 +1,5 @@
 import { useFetchTeamNames, useUpdateTeamNames } from "db/queries";
-import {
-  UserPayload,
-  useTeamsNamesChanges,
-  useTeamsPresence,
-} from "db/realtime";
+import { UserPayload, useTeamsNamesChanges, useTeamsPresence } from "db/realtime";
 import FirstPlayerDraw from "features/FirstPlayerDraw/FirstPlayerDraw";
 import Game from "features/game/Game/Game";
 import OnlineLobby from "features/OnlineLobby/OnlineLobby";
@@ -22,14 +18,8 @@ function OnlineGame({ gameId }: Props) {
   useTeamsPresence({ name, gameId, setUsers, onlineTeam });
 
   // Team names and order definition
-  const {
-    data: teams,
-    isLoading,
-    isError,
-    refetch,
-  } = useFetchTeamNames({ gameId });
-  const { updateFirstTeam, updateTeamLetter, updateTeamName } =
-    useUpdateTeamNames({ teams, gameId });
+  const { data: teams, isLoading, isError, refetch } = useFetchTeamNames({ gameId });
+  const { updateFirstTeam, updateTeamLetter, updateTeamName } = useUpdateTeamNames({ teams, gameId });
   useTeamsNamesChanges({ gameId, refetchTeams: refetch });
 
   // Can the game continue?

@@ -25,19 +25,10 @@ function OfflineGame() {
 
   if (firstTeam === undefined)
     return (
-      <FirstPlayerDraw
-        onAllPlayersSorted={setFirstTeam}
-        onSetLetter={setTeamLetter}
-        teams={teams}
-      />
+      <FirstPlayerDraw onAllPlayersSorted={setFirstTeam} onSetLetter={setTeamLetter} teams={teams} />
     );
 
-  return (
-    <Game
-      teamNames={{ team1: team1.name, team2: team2.name }}
-      firstTeam={firstTeam}
-    />
-  );
+  return <Game teamNames={{ team1: team1.name, team2: team2.name }} firstTeam={firstTeam} />;
 }
 
 export default OfflineGame;

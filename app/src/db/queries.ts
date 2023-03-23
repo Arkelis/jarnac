@@ -43,12 +43,7 @@ export function useFetchGame({ id }: UseFetchGameParams) {
   return useQuery<Game>({
     queryKey: ["games", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("games")
-        .select()
-        .eq("id", id)
-        .limit(1)
-        .single();
+      const { data, error } = await supabase.from("games").select().eq("id", id).limit(1).single();
       if (error) throw error;
       return data;
     },
@@ -84,10 +79,7 @@ interface UseUpdateTeamNamesParams {
   teams?: TeamsToDefine;
 }
 
-export function useUpdateTeamNames({
-  teams: currentTeams,
-  gameId,
-}: UseUpdateTeamNamesParams) {
+export function useUpdateTeamNames({ teams: currentTeams, gameId }: UseUpdateTeamNamesParams) {
   const { mutate } = useMutation({
     mutationFn: async (teamNames: TeamsToDefine) => {
       const { data, error } = await supabase

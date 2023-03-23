@@ -16,19 +16,12 @@ const canClick = (team: Team, onlineTeam?: Team | null) => {
   return team === onlineTeam;
 };
 
-function FirstPlayerDraw({
-  teams,
-  onAllPlayersSorted,
-  onlineTeam,
-  onSetLetter,
-}: Props) {
+function FirstPlayerDraw({ teams, onAllPlayersSorted, onlineTeam, onSetLetter }: Props) {
   const { draw } = useBag();
 
   const firstTeam = useMemo(() => {
     if (!teams.team1.letter || !teams.team2.letter) return undefined;
-    return teams.team1.letter.localeCompare(teams.team2.letter) < 0
-      ? Team.team1
-      : Team.team2;
+    return teams.team1.letter.localeCompare(teams.team2.letter) < 0 ? Team.team1 : Team.team2;
   }, [teams.team1.letter, teams.team2.letter]);
 
   return (
@@ -52,9 +45,7 @@ function FirstPlayerDraw({
       {firstTeam && (
         <>
           <p>Première équipe: {teams[firstTeam].name}</p>
-          <button onClick={() => onAllPlayersSorted(firstTeam)}>
-            Commencer !
-          </button>
+          <button onClick={() => onAllPlayersSorted(firstTeam)}>Commencer !</button>
         </>
       )}
     </>

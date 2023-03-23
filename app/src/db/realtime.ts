@@ -16,12 +16,7 @@ interface UseTeamsPresenceStateParams {
   onlineTeam: Team | null;
 }
 
-export function useTeamsPresence({
-  gameId,
-  name,
-  setUsers,
-  onlineTeam,
-}: UseTeamsPresenceStateParams) {
+export function useTeamsPresence({ gameId, name, setUsers, onlineTeam }: UseTeamsPresenceStateParams) {
   const userId = useMemo(() => uuid.v4(), []);
 
   useEffect(() => {
@@ -30,25 +25,16 @@ export function useTeamsPresence({
       config: { presence: { key: "presences" } },
     });
     channel
-      .on<UserPayload>(
-        "presence",
-        { event: "join" },
-        ({ key, newPresences, currentPresences }) => {
-          if (key !== "presences") return;
-          setUsers([...currentPresences, ...newPresences]);
-        }
-      )
-      .on<UserPayload>(
-        "presence",
-        { event: "leave" },
-        ({ key, currentPresences }) => {
-          if (key !== "presences") return;
-          setUsers(currentPresences);
-        }
-      )
+      .on<UserPayload>("presence", { event: "join" }, ({ key, newPresences, currentPresences }) => {
+        if (key !== "presences") return;
+        setUsers([...currentPresences, ...newPresences]);
+      })
+      .on<UserPayload>("presence", { event: "leave" }, ({ key, currentPresences }) => {
+        if (key !== "presences") return;
+        setUsers(currentPresences);
+      })
       .subscribe(async (status) => {
-        if (status === "SUBSCRIBED")
-          await channel.track({ id: userId, name, team: onlineTeam });
+        if (status === "SUBSCRIBED") await channel.track({ id: userId, name, team: onlineTeam });
       });
     return () => {
       channel.unsubscribe();
@@ -65,10 +51,7 @@ interface UseTeamsChangesParams {
   refetchTeams: () => void;
 }
 
-export function useTeamsNamesChanges({
-  gameId,
-  refetchTeams,
-}: UseTeamsChangesParams) {
+export function useTeamsNamesChanges({ gameId, refetchTeams }: UseTeamsChangesParams) {
   useEffect(() => {
     const channel = supabase.channel(`${gameId}:teamchange`);
     channel

@@ -6,13 +6,7 @@ interface Props {
   interactionsEnabled: boolean;
 }
 
-function DrawLetter({
-  name,
-  letter,
-  draw,
-  onDrawn,
-  interactionsEnabled,
-}: Props) {
+function DrawLetter({ name, letter, draw, onDrawn, interactionsEnabled }: Props) {
   if (letter === undefined) {
     return (
       <>

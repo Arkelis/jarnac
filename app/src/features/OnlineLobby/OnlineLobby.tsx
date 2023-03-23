@@ -36,9 +36,7 @@ function OnlineLobby({
       <h1>Équipes</h1>
       Joueurs présents :
       <ul>
-        {users?.map(({ id, name, team }) =>
-          team === undefined ? <li key={id}>{name}</li> : null
-        )}
+        {users?.map(({ id, name, team }) => (team === undefined ? <li key={id}>{name}</li> : null))}
       </ul>
       {team1}
       <button onClick={() => setTeam(Team.team1)}>Rejoindre</button>
@@ -55,9 +53,7 @@ function OnlineLobby({
         Changer le nom
       </button>
       <ul>
-        {users?.map(({ id, name, team }) =>
-          team === Team.team1 ? <li key={id}>{name}</li> : null
-        )}
+        {users?.map(({ id, name, team }) => (team === Team.team1 ? <li key={id}>{name}</li> : null))}
       </ul>
       {team2}
       <button onClick={() => setTeam(Team.team2)}>Rejoindre</button>
@@ -74,9 +70,7 @@ function OnlineLobby({
         Changer le nom
       </button>
       <ul>
-        {users?.map(({ id, name, team }) =>
-          team === Team.team2 ? <li key={id}>{name}</li> : null
-        )}
+        {users?.map(({ id, name, team }) => (team === Team.team2 ? <li key={id}>{name}</li> : null))}
       </ul>
       <p>Copiez ce lien pour inviter vos amis dans la partie : {gameUrl}</p>
     </div>

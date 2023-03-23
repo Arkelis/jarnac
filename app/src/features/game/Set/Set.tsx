@@ -1,10 +1,6 @@
 import ApproveWord from "features/game/ApproveWord/ApproveWord";
 import Board from "features/game/Board/Board";
-import {
-  ActionType,
-  GameActions,
-  GameState,
-} from "features/game/Game/useGameActions";
+import { ActionType, GameActions, GameState } from "features/game/Game/useGameActions";
 import MakeAWord from "features/game/MakeAWord/MakeAWord";
 import SwapLettersSection from "features/game/SwapLetters/SwapLettersSection";
 import { useCallback, useState } from "react";
@@ -30,21 +26,15 @@ function Set({
   refuseJarnac,
   pass,
 }: Props) {
-  const {
-    chosenLine,
-    lineMustBeChosen,
-    setDefaultLineChoiceOrAsk,
-    handleLineChoice,
-    resetChosenLine,
-  } = useLineChoice();
+  const { chosenLine, lineMustBeChosen, setDefaultLineChoiceOrAsk, handleLineChoice, resetChosenLine } =
+    useLineChoice();
   const [isMakingAWord, setIsMakingAWord] = useState(false);
   const [isMakingJarnac, setIsMakingJarnac] = useState(false);
   const [isInitiated, setIsInitiated] = useState(false);
 
   const { pendingWord } = gameState;
   const { name, possibleActions } = gameState[team];
-  const { board: lines, letters } =
-    gameState[isMakingJarnac ? opponent(team) : team];
+  const { board: lines, letters } = gameState[isMakingJarnac ? opponent(team) : team];
 
   console.log(lines);
 
@@ -67,11 +57,7 @@ function Set({
     <div>
       <p>Plateau de l&apos;équipe {name}</p>
       <hr />
-      <Board
-        lines={lines}
-        lineMustBeChosen={lineMustBeChosen}
-        onLineChoice={handleLineChoice}
-      />
+      <Board lines={lines} lineMustBeChosen={lineMustBeChosen} onLineChoice={handleLineChoice} />
       <div>
         <p>Lettres</p>
         <p>
@@ -134,22 +120,12 @@ function Set({
           }}
         />
       )}
-      {possibleActions.includes(ActionType.approveWord) &&
-        pendingWord !== null && (
-          <ApproveWord
-            approveWord={approveWord}
-            refuseWord={refuseWord}
-            word={pendingWord.word}
-          />
-        )}
-      {possibleActions.includes(ActionType.approveJarnac) &&
-        pendingWord !== null && (
-          <ApproveWord
-            approveWord={approveJarnac}
-            refuseWord={refuseJarnac}
-            word={pendingWord.word}
-          />
-        )}
+      {possibleActions.includes(ActionType.approveWord) && pendingWord !== null && (
+        <ApproveWord approveWord={approveWord} refuseWord={refuseWord} word={pendingWord.word} />
+      )}
+      {possibleActions.includes(ActionType.approveJarnac) && pendingWord !== null && (
+        <ApproveWord approveWord={approveJarnac} refuseWord={refuseJarnac} word={pendingWord.word} />
+      )}
     </div>
   );
 }

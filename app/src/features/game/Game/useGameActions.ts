@@ -75,18 +75,12 @@ function gameReducer(currentGameState: GameState, action: Action) {
 
     case ActionType.init:
       gameState[currentTeam].letters = action.letters;
-      gameState[currentTeam].possibleActions = [
-        ActionType.pass,
-        ActionType.proposeWord,
-      ];
+      gameState[currentTeam].possibleActions = [ActionType.pass, ActionType.proposeWord];
       return gameState;
 
     case ActionType.take:
       gameState[currentTeam].letters.push(action.letter);
-      gameState[currentTeam].possibleActions = [
-        ActionType.pass,
-        ActionType.proposeWord,
-      ];
+      gameState[currentTeam].possibleActions = [ActionType.pass, ActionType.proposeWord];
       return gameState;
 
     case ActionType.swap: {
@@ -95,32 +89,19 @@ function gameReducer(currentGameState: GameState, action: Action) {
         const idx = currentLetters.indexOf(letter);
         currentLetters.splice(idx, 1);
       });
-      gameState[currentTeam].letters = [
-        ...currentLetters,
-        ...action.newLetters,
-      ];
-      gameState[currentTeam].possibleActions = [
-        ActionType.proposeWord,
-        ActionType.pass,
-      ];
+      gameState[currentTeam].letters = [...currentLetters, ...action.newLetters];
+      gameState[currentTeam].possibleActions = [ActionType.proposeWord, ActionType.pass];
       return gameState;
     }
 
     case ActionType.pass:
-      gameState[opponentTeam].possibleActions = [
-        ActionType.jarnac,
-        ActionType.take,
-        ActionType.swap,
-      ];
+      gameState[opponentTeam].possibleActions = [ActionType.jarnac, ActionType.take, ActionType.swap];
       gameState[currentTeam].possibleActions = [];
       gameState.currentTeam = opponentTeam;
       return gameState;
 
     case ActionType.jarnacTimeout:
-      gameState[currentTeam].possibleActions = [
-        ActionType.take,
-        ActionType.swap,
-      ];
+      gameState[currentTeam].possibleActions = [ActionType.take, ActionType.swap];
       return gameState;
 
     case ActionType.jarnac:
@@ -129,40 +110,28 @@ function gameReducer(currentGameState: GameState, action: Action) {
     case ActionType.proposeWord:
       gameState.pendingWord = action.wordProposition;
       gameState[currentTeam].possibleActions = [];
-      gameState[opponentTeam].possibleActions = [
-        ActionType.approveWord,
-        ActionType.refuseWord,
-      ];
+      gameState[opponentTeam].possibleActions = [ActionType.approveWord, ActionType.refuseWord];
       gameState.currentTeam = opponentTeam;
       return gameState;
 
     case ActionType.proposeJarnac:
       gameState.pendingWord = action.wordProposition;
       gameState[currentTeam].possibleActions = [];
-      gameState[opponentTeam].possibleActions = [
-        ActionType.approveJarnac,
-        ActionType.refuseJarnac,
-      ];
+      gameState[opponentTeam].possibleActions = [ActionType.approveJarnac, ActionType.refuseJarnac];
       gameState.currentTeam = opponentTeam;
       return gameState;
 
     case ActionType.refuseWord:
       gameState.pendingWord = null;
       gameState[currentTeam].possibleActions = [];
-      gameState[opponentTeam].possibleActions = [
-        ActionType.pass,
-        ActionType.proposeWord,
-      ];
+      gameState[opponentTeam].possibleActions = [ActionType.pass, ActionType.proposeWord];
       gameState.currentTeam = opponentTeam;
       return gameState;
 
     case ActionType.refuseJarnac:
       gameState.pendingWord = null;
       gameState[currentTeam].possibleActions = [];
-      gameState[opponentTeam].possibleActions = [
-        ActionType.take,
-        ActionType.swap,
-      ];
+      gameState[opponentTeam].possibleActions = [ActionType.take, ActionType.swap];
       gameState.currentTeam = opponentTeam;
       return gameState;
 
@@ -237,11 +206,7 @@ export function useGameActions({
   firstTeam,
 }: Params): { gameState: GameState } & GameActions {
   const { bag, draw, discard, swapThree } = useBag();
-  const [gameState, dispatch] = useReducer(
-    gameReducer,
-    { team1, team2, firstTeam },
-    initialGame
-  );
+  const [gameState, dispatch] = useReducer(gameReducer, { team1, team2, firstTeam }, initialGame);
 
   console.log(firstTeam);
 
@@ -261,10 +226,7 @@ export function useGameActions({
     ) {
       return;
     }
-    const timer = setTimeout(
-      () => dispatch({ type: ActionType.jarnacTimeout }),
-      1000
-    );
+    const timer = setTimeout(() => dispatch({ type: ActionType.jarnacTimeout }), 1000);
     return () => clearTimeout(timer);
   }, [gameState]);
 
@@ -289,36 +251,22 @@ export function useGameActions({
   const pass = useCallback(() => dispatch({ type: ActionType.pass }), []);
 
   const proposeWord = useCallback(
-    (wordProposition: PendingWord) =>
-      dispatch({ type: ActionType.proposeWord, wordProposition }),
+    (wordProposition: PendingWord) => dispatch({ type: ActionType.proposeWord, wordProposition }),
     []
   );
 
   const proposeJarnac = useCallback(
-    (wordProposition: PendingWord) =>
-      dispatch({ type: ActionType.proposeJarnac, wordProposition }),
+    (wordProposition: PendingWord) => dispatch({ type: ActionType.proposeJarnac, wordProposition }),
     []
   );
 
-  const approveWord = useCallback(
-    () => dispatch({ type: ActionType.approveWord }),
-    []
-  );
+  const approveWord = useCallback(() => dispatch({ type: ActionType.approveWord }), []);
 
-  const refuseWord = useCallback(
-    () => dispatch({ type: ActionType.refuseWord }),
-    []
-  );
+  const refuseWord = useCallback(() => dispatch({ type: ActionType.refuseWord }), []);
 
-  const approveJarnac = useCallback(
-    () => dispatch({ type: ActionType.approveJarnac }),
-    []
-  );
+  const approveJarnac = useCallback(() => dispatch({ type: ActionType.approveJarnac }), []);
 
-  const refuseJarnac = useCallback(
-    () => dispatch({ type: ActionType.refuseJarnac }),
-    []
-  );
+  const refuseJarnac = useCallback(() => dispatch({ type: ActionType.refuseJarnac }), []);
 
   return {
     gameState,

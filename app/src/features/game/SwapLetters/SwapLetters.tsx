@@ -58,10 +58,7 @@ function SwapLetters({ letters, onConfirm, onCancel }: Props) {
           </button>
         ))}
       </p>
-      <button
-        disabled={cannotApproveSwap}
-        onClick={() => onConfirm(lettersToSwap)}
-      >
+      <button disabled={cannotApproveSwap} onClick={() => onConfirm(lettersToSwap)}>
         Valider
       </button>
       <button onClick={onCancel}>Annuler</button>
