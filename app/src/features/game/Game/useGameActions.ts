@@ -207,7 +207,7 @@ export function useGameActions({
   firstTeam,
   online = false,
 }: Params): { gameState: GameState } & GameActions {
-  const { bag, draw, discard, swapThree } = useBag({ online })
+  const { bag, draw, discard, swapThree } = useBag(online)
   const [gameState, dispatch] = useReducer(gameReducer, { team1, team2, firstTeam, online }, initialGame)
 
   const init = useCallback(() => {

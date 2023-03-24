@@ -9,16 +9,16 @@ interface UseFetchBagParams {
 
 export function useFetchBag({ gameId }: UseFetchBagParams) {
   return useQuery({
-    queryKey: ["games", gameId, "team_names"],
+    queryKey: ["games", gameId, "bag"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("games")
-        .select("team_names")
+        .select("bag")
         .eq("id", gameId)
         .limit(1)
         .single()
       if (error) throw error
-      return data.team_names as TeamsToDefine
+      return data.bag as Bag
     },
     enabled: Boolean(gameId),
     retry: false,

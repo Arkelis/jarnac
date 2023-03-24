@@ -1,4 +1,4 @@
-import { useCreateGame } from "db/queries"
+import { useCreateGame } from "db/queries/game"
 import { useEffect, useRef } from "react"
 
 interface Props {

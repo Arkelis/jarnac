@@ -57,11 +57,7 @@ function swapThreeLetters(bag: Bag, letters: string[]) {
   return { newBag: [...newBag, ...letters], newLetters }
 }
 
-interface Params {
-  online: boolean
-}
-
-export function useBag({ online = false }: Params) {
+export function useBag(online = false) {
   const [bag, setBag] = useState(initialBag())
   const draw = useCallback(() => {
     const { newBag, letter } = takeALetter(bag)

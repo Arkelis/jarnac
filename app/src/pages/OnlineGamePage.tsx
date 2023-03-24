@@ -1,4 +1,4 @@
-import { useFetchGame } from "db/queries"
+import { useFetchGame } from "db/queries/game"
 import OnlineGame from "features/OnlineGame/OnlineGame"
 import { Navigate, useParams } from "react-router-dom"
 

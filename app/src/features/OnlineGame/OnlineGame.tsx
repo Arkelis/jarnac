@@ -1,4 +1,4 @@
-import { useFetchTeamNames, useUpdateTeamNames } from "db/queries"
+import { useFetchTeamNames, useUpdateTeamNames } from "db/queries/teams"
 import { UserPayload, useTeamsNamesChanges, useTeamsPresence } from "db/realtime"
 import FirstPlayerDraw from "features/FirstPlayerDraw/FirstPlayerDraw"
 import Game from "features/game/Game/Game"
