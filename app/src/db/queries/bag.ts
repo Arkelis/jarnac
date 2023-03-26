@@ -1,13 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { supabase } from "db/client"
 import { Bag } from "models/bag"
-import { TeamsToDefine } from "types"
 
 interface UseFetchBagParams {
-  gameId: string
+  gameId?: string
+  onSuccess: (bag: Bag) => void
+  enabled?: boolean
 }
 
-export function useFetchBag({ gameId }: UseFetchBagParams) {
+export function useFetchBag({ gameId, enabled = true, onSuccess }: UseFetchBagParams) {
   return useQuery({
     queryKey: ["games", gameId, "bag"],
     queryFn: async () => {
@@ -20,19 +21,20 @@ export function useFetchBag({ gameId }: UseFetchBagParams) {
       if (error) throw error
       return data.bag as Bag
     },
-    enabled: Boolean(gameId),
+    enabled: Boolean(gameId) && enabled,
     retry: false,
+    onSuccess,
   })
 }
 
 interface UseUpdateBagParams {
-  gameId: string
-  teams?: TeamsToDefine
+  gameId?: string
 }
 
-export function useUpdateBagNames({ gameId }: UseUpdateBagParams) {
+export function useUpdateBag({ gameId }: UseUpdateBagParams) {
   return useMutation({
     mutationFn: async (bag: Bag) => {
+      if (!gameId) return
       const { data, error } = await supabase
         .from("games")
         .update({ bag })
@@ -42,7 +44,7 @@ export function useUpdateBagNames({ gameId }: UseUpdateBagParams) {
         .limit(1)
         .single()
       if (error) throw error
-      return data
+      return data.bag as Bag
     },
     retry: false,
   })

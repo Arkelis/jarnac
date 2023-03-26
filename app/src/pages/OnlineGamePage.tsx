@@ -1,15 +1,15 @@
-import { useFetchGame } from "db/queries/game"
+import { useFetchTeamNames } from "db/queries/teams"
 import OnlineGame from "features/OnlineGame/OnlineGame"
 import { Navigate, useParams } from "react-router-dom"
 
 function OnlineGamePage() {
-  const { id } = useParams()
-  const { data, isInitialLoading } = useFetchGame({ id })
+  const { gameId } = useParams()
+  const { data, isInitialLoading } = useFetchTeamNames({ gameId })
 
   if (isInitialLoading) return <p>Chargement en cours</p>
-  if (data === undefined) return <Navigate to="/" />
+  if (!data || !gameId) return <Navigate to="/" />
 
-  return <OnlineGame gameId={data.id} />
+  return <OnlineGame gameId={gameId} />
 }
 
 export default OnlineGamePage

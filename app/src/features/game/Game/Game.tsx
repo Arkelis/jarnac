@@ -5,14 +5,14 @@ import { useGameActions } from "./useGameActions"
 interface Props {
   teamNames: Teams
   firstTeam: Team
-  online?: boolean
+  gameId?: string
 }
 
-function Game({ teamNames, firstTeam, online = false }: Props) {
+function Game({ teamNames, firstTeam, gameId }: Props) {
   const { team1: teamOneName, team2: teamTwoName } = teamNames
   const { gameState, ...actions } = useGameActions({
     firstTeam,
-    online,
+    gameId,
   })
 
   return (

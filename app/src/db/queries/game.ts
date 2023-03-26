@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { supabase } from "db/client"
+import { initialBag } from "models/bag"
 import { GameState } from "models/game"
 
 interface UseCreateGameParams {
@@ -17,6 +18,7 @@ export function useCreateGame({ onSuccess }: UseCreateGameParams) {
               team1: { name: "Charme" },
               team2: { name: "Ébène" },
             },
+            bag: initialBag(),
           },
         ])
         .select("id")
@@ -28,24 +30,49 @@ export function useCreateGame({ onSuccess }: UseCreateGameParams) {
   })
 }
 
-interface Game {
-  id: string
-  state: GameState
-}
-
 interface UseFetchGameParams {
-  id?: string
+  gameId?: string
+  onSuccess?: (game: GameState) => void
 }
 
-export function useFetchGame({ id }: UseFetchGameParams) {
-  return useQuery<Game>({
-    queryKey: ["games", id],
+export function useFetchGame({ gameId, onSuccess }: UseFetchGameParams) {
+  return useQuery({
+    queryKey: ["games", gameId, "game"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("games").select().eq("id", id).limit(1).single()
+      const { data, error } = await supabase
+        .from("games")
+        .select("game_state")
+        .eq("id", gameId)
+        .limit(1)
+        .single()
       if (error) throw error
-      return data
+      return data.game_state as GameState
     },
-    enabled: Boolean(id),
+    enabled: Boolean(gameId),
+    retry: false,
+    onSuccess,
+  })
+}
+
+interface UseUpdateGameParams {
+  gameId?: string
+}
+
+export function useUpdateGame({ gameId }: UseUpdateGameParams) {
+  return useMutation({
+    mutationFn: async (game: GameState) => {
+      if (!gameId) return
+      const { data, error } = await supabase
+        .from("games")
+        .update({ game_state: game })
+        .eq("id", gameId)
+        .select("game_state")
+        .order("id")
+        .limit(1)
+        .single()
+      if (error) throw error
+      return data.game_state as GameState
+    },
     retry: false,
   })
 }

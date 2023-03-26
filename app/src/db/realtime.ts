@@ -1,5 +1,6 @@
+import { useQueryClient } from "@tanstack/react-query"
 import { supabase } from "db/client"
-import { useEffect, useMemo } from "react"
+import { useContext, useEffect, useMemo } from "react"
 import { Team } from "types"
 import * as uuid from "uuid"
 
@@ -46,13 +47,14 @@ export function gameStateChanges({ gameId }: { gameId: string }) {
   return supabase.channel(`${gameId}:statechange`)
 }
 
-interface UseTeamsChangesParams {
-  gameId: string
-  refetchTeams: () => void
+interface UseGameChange {
+  gameId?: string
 }
 
-export function useTeamsNamesChanges({ gameId, refetchTeams }: UseTeamsChangesParams) {
+export function useGameChange({ gameId }: UseGameChange) {
+  const queryClient = useQueryClient()
   useEffect(() => {
+    if (!gameId) return
     const channel = supabase.channel(`${gameId}:teamchange`)
     channel
       .on(
@@ -63,7 +65,7 @@ export function useTeamsNamesChanges({ gameId, refetchTeams }: UseTeamsChangesPa
           table: "games",
           filter: `id=eq.${gameId}`,
         },
-        () => refetchTeams()
+        () => queryClient.invalidateQueries({ queryKey: ["games", gameId] })
       )
       .subscribe()
     return () => {

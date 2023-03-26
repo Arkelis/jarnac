@@ -1,5 +1,5 @@
 import { useFetchTeamNames, useUpdateTeamNames } from "db/queries/teams"
-import { UserPayload, useTeamsNamesChanges, useTeamsPresence } from "db/realtime"
+import { useGameChange, UserPayload, useTeamsPresence } from "db/realtime"
 import FirstPlayerDraw from "features/FirstPlayerDraw/FirstPlayerDraw"
 import Game from "features/game/Game/Game"
 import OnlineLobby from "features/OnlineLobby/OnlineLobby"
@@ -18,9 +18,12 @@ function OnlineGame({ gameId }: Props) {
   useTeamsPresence({ name, gameId, setUsers, onlineTeam })
 
   // Team names and order definition
-  const { data: teams, isLoading, isError, refetch } = useFetchTeamNames({ gameId })
-  const { updateFirstTeam, updateTeamLetter, updateTeamName } = useUpdateTeamNames({ teams, gameId })
-  useTeamsNamesChanges({ gameId, refetchTeams: refetch })
+  const { data: teams, isLoading, isError } = useFetchTeamNames({ gameId })
+  useGameChange({ gameId })
+  const { updateFirstTeamAndInitGame, updateTeamLetter, updateTeamName } = useUpdateTeamNames({
+    teams,
+    gameId,
+  })
 
   // Can the game continue?
   const gameIsOngoing = useMemo(() => {
@@ -51,13 +54,15 @@ function OnlineGame({ gameId }: Props) {
         <FirstPlayerDraw
           teams={teams}
           onlineTeam={onlineTeam}
-          onAllPlayersSorted={updateFirstTeam}
+          onAllPlayersSorted={updateFirstTeamAndInitGame}
           onSetLetter={updateTeamLetter}
+          gameId={gameId}
         />
       ) : gameIsOngoing && firstTeam ? (
         <Game // TODO: Sync game state
           firstTeam={firstTeam}
           teamNames={{ team1: teamNames.team1, team2: teamNames.team2 }}
+          gameId={gameId}
         />
       ) : (
         `Une équipe est vide`

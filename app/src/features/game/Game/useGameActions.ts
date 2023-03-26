@@ -1,4 +1,5 @@
-import { useBag } from "features/bag"
+import { useFetchGame, useUpdateGame } from "db/queries/game"
+import { useBag } from "features/useBag"
 import { Action, GameState, initialGame, isConsonant, PendingWord } from "models/game"
 import { useCallback, useEffect, useReducer } from "react"
 import { opponent, Team } from "types"
@@ -9,6 +10,9 @@ function gameReducer(currentGameState: GameState, action: Action) {
   const opponentTeam = opponent(currentTeam)
 
   switch (action.type) {
+    case "sync":
+      return action.newGameState
+
     case "changeTurn":
       gameState.currentTeam = opponentTeam
       return gameState
@@ -104,7 +108,7 @@ function gameReducer(currentGameState: GameState, action: Action) {
 
 interface Params {
   firstTeam: Team
-  online: boolean
+  gameId?: string
 }
 
 export interface GameActions {
@@ -120,12 +124,23 @@ export interface GameActions {
   refuseJarnac: () => void
 }
 
-export function useGameActions({
-  firstTeam,
-  online = false,
-}: Params): { gameState: GameState } & GameActions {
-  const { bag, draw, discard, swapThree } = useBag(online)
-  const [gameState, dispatch] = useReducer(gameReducer, { firstTeam, online }, initialGame)
+export function useGameActions({ firstTeam, gameId }: Params): { gameState: GameState } & GameActions {
+  const { bag, draw, discard, swapThree } = useBag(gameId)
+  const [gameState, _dispatch] = useReducer(gameReducer, { firstTeam }, initialGame)
+
+  // online synchronization
+  const { mutate } = useUpdateGame({ gameId })
+  const dispatch = useCallback(
+    (action: Action) => {
+      _dispatch(action)
+      mutate(gameReducer(gameState, action))
+    },
+    [mutate, gameState]
+  )
+  useFetchGame({
+    gameId,
+    onSuccess: (newGameState) => _dispatch({ type: "sync", newGameState }),
+  })
 
   const init = useCallback(() => {
     const letters = Array(6).fill(undefined).map(draw)

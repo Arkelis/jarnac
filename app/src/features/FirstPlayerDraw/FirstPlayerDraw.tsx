@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { useBag } from "features/bag"
+import { useBag } from "features/useBag"
 import DrawLetter from "./DrawLetter"
 import { Team, TeamsToDefine } from "types"
 
@@ -8,6 +8,7 @@ interface Props {
   onAllPlayersSorted: (firstTeam: Team) => void
   onlineTeam?: Team | null
   onSetLetter: (team: Team) => (letter: string) => void
+  gameId?: string
 }
 
 const canClick = (team: Team, onlineTeam?: Team | null) => {
@@ -16,8 +17,8 @@ const canClick = (team: Team, onlineTeam?: Team | null) => {
   return team === onlineTeam
 }
 
-function FirstPlayerDraw({ teams, onAllPlayersSorted, onlineTeam, onSetLetter }: Props) {
-  const { draw } = useBag()
+function FirstPlayerDraw({ teams, onAllPlayersSorted, onlineTeam, onSetLetter, gameId }: Props) {
+  const { draw, reset } = useBag(gameId)
 
   const firstTeam = useMemo(() => {
     if (!teams.team1.letter || !teams.team2.letter) return undefined
@@ -45,7 +46,14 @@ function FirstPlayerDraw({ teams, onAllPlayersSorted, onlineTeam, onSetLetter }:
       {firstTeam && (
         <>
           <p>Première équipe: {teams[firstTeam].name}</p>
-          <button onClick={() => onAllPlayersSorted(firstTeam)}>Commencer !</button>
+          <button
+            onClick={() => {
+              onAllPlayersSorted(firstTeam)
+              if (gameId) reset()
+            }}
+          >
+            Commencer !
+          </button>
         </>
       )}
     </>

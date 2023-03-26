@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { supabase } from "db/client"
+import { GameState, initialGame } from "models/game"
 import { useCallback } from "react"
 import { Team, TeamsToDefine } from "types"
 
 interface UseFetchTeamNamesParams {
-  gameId: string
+  gameId?: string
 }
 
 export function useFetchTeamNames({ gameId }: UseFetchTeamNamesParams) {
@@ -30,12 +31,17 @@ interface UseUpdateTeamNamesParams {
   teams?: TeamsToDefine
 }
 
+interface MutateTeamNamesParams {
+  teamNames: TeamsToDefine
+  game?: GameState
+}
+
 export function useUpdateTeamNames({ teams: currentTeams, gameId }: UseUpdateTeamNamesParams) {
   const { mutate } = useMutation({
-    mutationFn: async (teamNames: TeamsToDefine) => {
+    mutationFn: async ({ teamNames, game }: MutateTeamNamesParams) => {
       const { data, error } = await supabase
         .from("games")
-        .update({ team_names: teamNames })
+        .update({ team_names: teamNames, game_state: game })
         .eq("id", gameId)
         .select()
         .order("id")
@@ -50,7 +56,7 @@ export function useUpdateTeamNames({ teams: currentTeams, gameId }: UseUpdateTea
   const updateTeamLetter = useCallback(
     (team: Team) => (letter: string) => {
       if (!currentTeams) return
-      mutate({ ...currentTeams, [team]: { ...currentTeams[team], letter } })
+      mutate({ teamNames: { ...currentTeams, [team]: { ...currentTeams[team], letter } } })
     },
     [currentTeams, mutate]
   )
@@ -58,18 +64,18 @@ export function useUpdateTeamNames({ teams: currentTeams, gameId }: UseUpdateTea
   const updateTeamName = useCallback(
     ({ team, name }: { team: Team; name: string }) => {
       if (!currentTeams) return
-      mutate({ ...currentTeams, [team]: { ...currentTeams[team], name } })
+      mutate({ teamNames: { ...currentTeams, [team]: { ...currentTeams[team], name } } })
     },
     [currentTeams, mutate]
   )
 
-  const updateFirstTeam = useCallback(
-    (team: Team) => {
+  const updateFirstTeamAndInitGame = useCallback(
+    (firstTeam: Team) => {
       if (!currentTeams) return
-      mutate({ ...currentTeams, firstTeam: team })
+      mutate({ teamNames: { ...currentTeams, firstTeam }, game: initialGame({ firstTeam }) })
     },
     [currentTeams, mutate]
   )
 
-  return { updateTeamLetter, updateTeamName, updateFirstTeam }
+  return { updateTeamLetter, updateTeamName, updateFirstTeamAndInitGame }
 }
