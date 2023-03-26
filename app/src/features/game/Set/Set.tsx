@@ -1,19 +1,22 @@
 import ApproveWord from "features/game/ApproveWord/ApproveWord"
 import Board from "features/game/Board/Board"
-import { ActionType, GameActions, GameState } from "features/game/Game/useGameActions"
+import { GameActions } from "features/game/Game/useGameActions"
 import MakeAWord from "features/game/MakeAWord/MakeAWord"
 import SwapLettersSection from "features/game/SwapLetters/SwapLettersSection"
+import { GameState } from "models/game"
 import { useCallback, useState } from "react"
 import { opponent, Team } from "types"
 import { useLineChoice } from "./useLineChoice"
 
 interface Props extends GameActions {
   team: Team
+  teamName: string
   gameState: GameState
 }
 
 function Set({
   team,
+  teamName,
   gameState,
   init,
   take,
@@ -33,7 +36,7 @@ function Set({
   const [isInitiated, setIsInitiated] = useState(false)
 
   const { pendingWord } = gameState
-  const { name, possibleActions } = gameState[team]
+  const { possibleActions } = gameState[team]
   const { board: lines, letters } = gameState[isMakingJarnac ? opponent(team) : team]
 
   console.log(lines)
@@ -55,7 +58,7 @@ function Set({
 
   return (
     <div>
-      <p>Plateau de l&apos;équipe {name}</p>
+      <p>Plateau de l&apos;équipe {teamName}</p>
       <hr />
       <Board lines={lines} lineMustBeChosen={lineMustBeChosen} onLineChoice={handleLineChoice} />
       <div>
@@ -69,21 +72,19 @@ function Set({
         </p>
       </div>
       {possibleActions.length > 0 && <p>{"C'est à vous de jouer !"}</p>}
-      {possibleActions.includes(ActionType.jarnac) && !isMakingAWord && (
+      {possibleActions.includes("jarnac") && !isMakingAWord && (
         <button onClick={prepareJarnac}>JARNAC</button>
       )}
-      {possibleActions.includes(ActionType.take) && !isInitiated && (
+      {possibleActions.includes("take") && !isInitiated && (
         <button onClick={initiateSet}>Tirer 6 lettres pour commencer</button>
       )}
-      {possibleActions.includes(ActionType.take) && isInitiated && (
+      {possibleActions.includes("take") && isInitiated && (
         <button onClick={take}>Piocher une lettre</button>
       )}
-      {possibleActions.includes(ActionType.proposeWord) && !isMakingAWord && (
+      {possibleActions.includes("proposeWord") && !isMakingAWord && (
         <button onClick={prepareMakeAWord}>Fabriquer un nouveau mot</button>
       )}
-      {possibleActions.includes(ActionType.pass) && !isMakingAWord && (
-        <button onClick={pass}>Passer</button>
-      )}
+      {possibleActions.includes("pass") && !isMakingAWord && <button onClick={pass}>Passer</button>}
       <SwapLettersSection
         letters={letters}
         isInitiated={isInitiated}
@@ -120,10 +121,10 @@ function Set({
           }}
         />
       )}
-      {possibleActions.includes(ActionType.approveWord) && pendingWord !== null && (
+      {possibleActions.includes("approveWord") && pendingWord !== null && (
         <ApproveWord approveWord={approveWord} refuseWord={refuseWord} word={pendingWord.word} />
       )}
-      {possibleActions.includes(ActionType.approveJarnac) && pendingWord !== null && (
+      {possibleActions.includes("approveJarnac") && pendingWord !== null && (
         <ApproveWord approveWord={approveJarnac} refuseWord={refuseJarnac} word={pendingWord.word} />
       )}
     </div>

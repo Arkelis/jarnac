@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { supabase } from "db/client"
-import { Bag } from "features/bag"
+import { Bag } from "models/bag"
 import { TeamsToDefine } from "types"
 
 interface UseFetchBagParams {

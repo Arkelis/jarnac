@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { GameState } from "features/game/Game/useGameActions"
 import { supabase } from "db/client"
+import { GameState } from "models/game"
 
 interface UseCreateGameParams {
   onSuccess: (id: string) => void

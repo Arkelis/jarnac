@@ -1,4 +1,4 @@
-import { ActionType } from "features/game/Game/useGameActions"
+import { ActionType } from "models/game"
 import { useState } from "react"
 import SwapLetters from "./SwapLetters"
 
@@ -14,7 +14,7 @@ function SwapLettersSection({ letters, onConfirmSwap, possibleActions, isInitiat
 
   return (
     <>
-      {possibleActions.includes(ActionType.take) && isInitiated && (
+      {possibleActions.includes("take") && isInitiated && (
         <button onClick={() => setIsSwappingLetters(true)}>Echanger trois lettres</button>
       )}
       {isSwappingLetters && (
