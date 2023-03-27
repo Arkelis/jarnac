@@ -31,6 +31,7 @@ export interface PendingWord {
 }
 
 interface TeamState {
+  initiated: boolean
   possibleActions: ActionType[]
   board: Board
   letters: string[]
@@ -59,11 +60,13 @@ export function initialGame({ firstTeam }: InitialGameParams): GameState {
       possibleActions: firstTeam === Team.team1 ? ["take"] : [],
       board: [],
       letters: [],
+      initiated: false,
     },
     team2: {
       possibleActions: firstTeam === Team.team2 ? ["take"] : [],
       board: [],
       letters: [],
+      initiated: false,
     },
   }
 }

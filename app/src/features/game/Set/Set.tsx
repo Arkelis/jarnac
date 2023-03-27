@@ -33,18 +33,10 @@ function Set({
     useLineChoice()
   const [isMakingAWord, setIsMakingAWord] = useState(false)
   const [isMakingJarnac, setIsMakingJarnac] = useState(false)
-  const [isInitiated, setIsInitiated] = useState(false)
 
   const { pendingWord } = gameState
-  const { possibleActions } = gameState[team]
+  const { possibleActions, initiated } = gameState[team]
   const { board: lines, letters } = gameState[isMakingJarnac ? opponent(team) : team]
-
-  console.log(lines)
-
-  const initiateSet = useCallback(() => {
-    init()
-    setIsInitiated(true)
-  }, [init, setIsInitiated])
 
   const prepareMakeAWord = useCallback(() => {
     setIsMakingAWord(true)
@@ -75,22 +67,17 @@ function Set({
       {possibleActions.includes("jarnac") && !isMakingAWord && (
         <button onClick={prepareJarnac}>JARNAC</button>
       )}
-      {possibleActions.includes("take") && !isInitiated && (
-        <button onClick={initiateSet}>Tirer 6 lettres pour commencer</button>
+      {possibleActions.includes("take") && !initiated && (
+        <button onClick={init}>Tirer 6 lettres pour commencer</button>
       )}
-      {possibleActions.includes("take") && isInitiated && (
+      {possibleActions.includes("take") && initiated && (
         <button onClick={take}>Piocher une lettre</button>
       )}
       {possibleActions.includes("proposeWord") && !isMakingAWord && (
         <button onClick={prepareMakeAWord}>Fabriquer un nouveau mot</button>
       )}
       {possibleActions.includes("pass") && !isMakingAWord && <button onClick={pass}>Passer</button>}
-      <SwapLettersSection
-        letters={letters}
-        isInitiated={isInitiated}
-        onConfirmSwap={swap}
-        possibleActions={possibleActions}
-      />
+      <SwapLettersSection letters={letters} onConfirmSwap={swap} possibleActions={possibleActions} />
       {isMakingAWord && chosenLine !== undefined && (
         <MakeAWord
           letters={letters}

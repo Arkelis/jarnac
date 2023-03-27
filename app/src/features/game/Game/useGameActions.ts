@@ -19,6 +19,7 @@ function gameReducer(currentGameState: GameState, action: Action) {
 
     case "init":
       gameState[currentTeam].letters = action.letters
+      gameState[currentTeam].initiated = true
       gameState[currentTeam].possibleActions = ["pass", "proposeWord"]
       return gameState
 

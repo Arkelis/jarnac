@@ -6,15 +6,15 @@ interface Props {
   letters: string[]
   onConfirmSwap: (letters: string[]) => void
   possibleActions: ActionType[]
-  isInitiated: boolean
+  initiated: boolean
 }
 
-function SwapLettersSection({ letters, onConfirmSwap, possibleActions, isInitiated }: Props) {
+function SwapLettersSection({ letters, onConfirmSwap, possibleActions, initiated }: Props) {
   const [isSwappingLetters, setIsSwappingLetters] = useState(false)
 
   return (
     <>
-      {possibleActions.includes("take") && isInitiated && (
+      {possibleActions.includes("take") && initiated && (
         <button onClick={() => setIsSwappingLetters(true)}>Echanger trois lettres</button>
       )}
       {isSwappingLetters && (
