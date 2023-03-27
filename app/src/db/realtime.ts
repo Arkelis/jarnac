@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { supabase } from "db/client"
-import { useContext, useEffect, useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { Team } from "types"
 import * as uuid from "uuid"
 
@@ -40,7 +40,7 @@ export function useTeamsPresence({ gameId, name, setUsers, onlineTeam }: UseTeam
     return () => {
       channel.unsubscribe()
     }
-  }, [name, onlineTeam])
+  }, [gameId, name, onlineTeam, setUsers, userId])
 }
 
 export function gameStateChanges({ gameId }: { gameId: string }) {
@@ -71,5 +71,5 @@ export function useGameChange({ gameId }: UseGameChange) {
     return () => {
       channel.unsubscribe()
     }
-  }, [])
+  }, [gameId, queryClient])
 }

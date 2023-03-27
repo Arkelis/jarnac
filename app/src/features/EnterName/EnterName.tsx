@@ -9,7 +9,7 @@ function EnterName({ onSubmitName }: Props) {
   const handleSubmit = useCallback(() => {
     if (!nameInputRef.current) return
     onSubmitName(nameInputRef.current.value)
-  }, [])
+  }, [onSubmitName])
 
   return (
     <>

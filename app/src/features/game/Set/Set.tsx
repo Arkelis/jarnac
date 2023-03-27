@@ -44,12 +44,12 @@ function Set({
   const initiateSet = useCallback(() => {
     init()
     setIsInitiated(true)
-  }, [])
+  }, [init, setIsInitiated])
 
   const prepareMakeAWord = useCallback(() => {
     setIsMakingAWord(true)
     setDefaultLineChoiceOrAsk(lines)
-  }, [lines])
+  }, [lines, setDefaultLineChoiceOrAsk])
 
   const prepareJarnac = () => {
     setIsMakingJarnac(true)

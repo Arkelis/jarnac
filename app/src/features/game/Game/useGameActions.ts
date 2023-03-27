@@ -149,7 +149,7 @@ export function useGameActions({ firstTeam, gameId }: Params): { gameState: Game
       letters.push(draw())
     }
     dispatch({ type: "init", letters })
-  }, [])
+  }, [discard, dispatch, draw])
 
   useEffect(() => {
     if (
@@ -160,7 +160,7 @@ export function useGameActions({ firstTeam, gameId }: Params): { gameState: Game
     }
     const timer = setTimeout(() => dispatch({ type: "jarnacTimeout" }), 1000)
     return () => clearTimeout(timer)
-  }, [gameState])
+  }, [dispatch, gameState])
 
   const take = useCallback(() => {
     if (bag.length < 1) {
@@ -169,30 +169,33 @@ export function useGameActions({ firstTeam, gameId }: Params): { gameState: Game
     const letter = draw()
     dispatch({ type: "take", letter })
     return "ok"
-  }, [draw])
+  }, [bag.length, dispatch, draw])
 
-  const swap = useCallback((lettersToRemove: string[]) => {
-    if (bag.length < 3) {
-      return "error"
-    }
-    const newLetters = swapThree(lettersToRemove)
-    dispatch({ type: "swap", lettersToRemove, newLetters })
-    return "ok"
-  }, [])
+  const swap = useCallback(
+    (lettersToRemove: string[]) => {
+      if (bag.length < 3) {
+        return "error"
+      }
+      const newLetters = swapThree(lettersToRemove)
+      dispatch({ type: "swap", lettersToRemove, newLetters })
+      return "ok"
+    },
+    [bag.length, dispatch, swapThree]
+  )
 
-  const pass = useCallback(() => dispatch({ type: "pass" }), [])
+  const pass = useCallback(() => dispatch({ type: "pass" }), [dispatch])
   const proposeWord = useCallback(
     (wordProposition: PendingWord) => dispatch({ type: "proposeWord", wordProposition }),
-    []
+    [dispatch]
   )
   const proposeJarnac = useCallback(
     (wordProposition: PendingWord) => dispatch({ type: "proposeJarnac", wordProposition }),
-    []
+    [dispatch]
   )
-  const approveWord = useCallback(() => dispatch({ type: "approveWord" }), [])
-  const refuseWord = useCallback(() => dispatch({ type: "refuseWord" }), [])
-  const approveJarnac = useCallback(() => dispatch({ type: "approveJarnac" }), [])
-  const refuseJarnac = useCallback(() => dispatch({ type: "refuseJarnac" }), [])
+  const approveWord = useCallback(() => dispatch({ type: "approveWord" }), [dispatch])
+  const refuseWord = useCallback(() => dispatch({ type: "refuseWord" }), [dispatch])
+  const approveJarnac = useCallback(() => dispatch({ type: "approveJarnac" }), [dispatch])
+  const refuseJarnac = useCallback(() => dispatch({ type: "refuseJarnac" }), [dispatch])
 
   return {
     gameState,
