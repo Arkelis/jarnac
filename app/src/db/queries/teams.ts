@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "db/client"
 import { GameState, initialGame } from "models/game"
 import { useCallback } from "react"
@@ -37,6 +37,9 @@ interface MutateTeamNamesParams {
 }
 
 export function useUpdateTeamNames({ teams: currentTeams, gameId }: UseUpdateTeamNamesParams) {
+  const queryClient = useQueryClient()
+  const queryKey = ["games", gameId, "team_names"]
+
   const { mutate } = useMutation({
     mutationFn: async ({ teamNames, game }: MutateTeamNamesParams) => {
       const { data, error } = await supabase
@@ -49,6 +52,15 @@ export function useUpdateTeamNames({ teams: currentTeams, gameId }: UseUpdateTea
         .single()
       if (error) throw error
       return data
+    },
+    onMutate: async (newTeams) => {
+      await queryClient.cancelQueries({ queryKey })
+      const previousTeams = queryClient.getQueryData(queryKey)
+      queryClient.setQueryData(queryKey, newTeams)
+      return { previousTeams }
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(queryKey, context?.previousTeams)
     },
     retry: false,
   })

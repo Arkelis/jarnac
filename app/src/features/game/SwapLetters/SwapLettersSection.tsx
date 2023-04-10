@@ -1,22 +1,18 @@
-import { ActionType } from "models/game"
 import { useState } from "react"
 import SwapLetters from "./SwapLetters"
 
 interface Props {
+  canPlay: boolean
   letters: string[]
   onConfirmSwap: (letters: string[]) => void
-  possibleActions: ActionType[]
-  initiated: boolean
 }
 
-function SwapLettersSection({ letters, onConfirmSwap, possibleActions, initiated }: Props) {
+function SwapLettersSection({ canPlay, letters, onConfirmSwap }: Props) {
   const [isSwappingLetters, setIsSwappingLetters] = useState(false)
 
   return (
     <>
-      {possibleActions.includes("take") && initiated && (
-        <button onClick={() => setIsSwappingLetters(true)}>Echanger trois lettres</button>
-      )}
+      {canPlay && <button onClick={() => setIsSwappingLetters(true)}>Echanger trois lettres</button>}
       {isSwappingLetters && (
         <SwapLetters
           letters={letters}

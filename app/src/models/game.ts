@@ -70,3 +70,7 @@ export function initialGame({ firstTeam }: InitialGameParams): GameState {
     },
   }
 }
+
+export function computeScore(board: Board) {
+  return board.map((line) => line.length * line.length).reduce((total, score) => total + score, 0)
+}

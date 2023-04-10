@@ -3,7 +3,7 @@ import Board from "features/game/Board/Board"
 import { GameActions } from "features/game/Game/useGameActions"
 import MakeAWord from "features/game/MakeAWord/MakeAWord"
 import SwapLettersSection from "features/game/SwapLetters/SwapLettersSection"
-import { GameState } from "models/game"
+import { computeScore, GameState } from "models/game"
 import { useCallback, useState } from "react"
 import { opponent, Team } from "types"
 import { useLineChoice } from "./useLineChoice"
@@ -12,12 +12,14 @@ interface Props extends GameActions {
   team: Team
   teamName: string
   gameState: GameState
+  onlineTeam?: Team | null
 }
 
 function Set({
   team,
   teamName,
   gameState,
+  onlineTeam,
   init,
   take,
   swap,
@@ -37,6 +39,11 @@ function Set({
   const { pendingWord } = gameState
   const { possibleActions, initiated } = gameState[team]
   const { board: lines, letters } = gameState[isMakingJarnac ? opponent(team) : team]
+  const gameIsFinished = lines.length === 9 || gameState[opponent(team)].board.length === 9
+  const ownsSet = (onlineTeam === undefined || onlineTeam === team) && !gameIsFinished
+
+  const points = computeScore(lines)
+  const opponentPoints = computeScore(gameState[opponent(team)].board)
 
   const prepareMakeAWord = useCallback(() => {
     setIsMakingAWord(true)
@@ -63,21 +70,27 @@ function Set({
           ))}
         </p>
       </div>
-      {possibleActions.length > 0 && <p>{"C'est à vous de jouer !"}</p>}
-      {possibleActions.includes("jarnac") && !isMakingAWord && (
+      {ownsSet && possibleActions.length > 0 && <p>{"C'est à vous de jouer !"}</p>}
+      {ownsSet && possibleActions.includes("jarnac") && !isMakingAWord && (
         <button onClick={prepareJarnac}>JARNAC</button>
       )}
-      {possibleActions.includes("take") && !initiated && (
+      {ownsSet && possibleActions.includes("take") && !initiated && (
         <button onClick={init}>Tirer 6 lettres pour commencer</button>
       )}
-      {possibleActions.includes("take") && initiated && (
+      {ownsSet && possibleActions.includes("take") && initiated && (
         <button onClick={take}>Piocher une lettre</button>
       )}
-      {possibleActions.includes("proposeWord") && !isMakingAWord && (
+      {ownsSet && possibleActions.includes("proposeWord") && !isMakingAWord && (
         <button onClick={prepareMakeAWord}>Fabriquer un nouveau mot</button>
       )}
-      {possibleActions.includes("pass") && !isMakingAWord && <button onClick={pass}>Passer</button>}
-      <SwapLettersSection letters={letters} onConfirmSwap={swap} possibleActions={possibleActions} />
+      {ownsSet && possibleActions.includes("pass") && !isMakingAWord && (
+        <button onClick={pass}>Passer</button>
+      )}
+      <SwapLettersSection
+        canPlay={ownsSet && possibleActions.includes("take") && initiated}
+        letters={letters}
+        onConfirmSwap={swap}
+      />
       {isMakingAWord && chosenLine !== undefined && (
         <MakeAWord
           letters={letters}
@@ -108,11 +121,19 @@ function Set({
           }}
         />
       )}
-      {possibleActions.includes("approveWord") && pendingWord !== null && (
+      {ownsSet && possibleActions.includes("approveWord") && pendingWord !== null && (
         <ApproveWord approveWord={approveWord} refuseWord={refuseWord} word={pendingWord.word} />
       )}
-      {possibleActions.includes("approveJarnac") && pendingWord !== null && (
+      {ownsSet && possibleActions.includes("approveJarnac") && pendingWord !== null && (
         <ApproveWord approveWord={approveJarnac} refuseWord={refuseJarnac} word={pendingWord.word} />
+      )}
+      {gameIsFinished && (
+        <div>
+          <p>
+            <strong>{points > opponentPoints ? "Victoire !" : "Défaite !"}</strong>
+          </p>
+          <p>{`Votre score : ${points} points`}</p>
+        </div>
       )}
     </div>
   )

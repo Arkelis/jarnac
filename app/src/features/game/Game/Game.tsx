@@ -6,9 +6,10 @@ interface Props {
   teamNames: Teams
   firstTeam: Team
   gameId?: string
+  onlineTeam?: Team | null
 }
 
-function Game({ teamNames, firstTeam, gameId }: Props) {
+function Game({ teamNames, firstTeam, gameId, onlineTeam }: Props) {
   const { team1: teamOneName, team2: teamTwoName } = teamNames
   const { gameState, ...actions } = useGameActions({
     firstTeam,
@@ -18,8 +19,20 @@ function Game({ teamNames, firstTeam, gameId }: Props) {
   return (
     <>
       <div>
-        <Set team={Team.team1} teamName={teamOneName} gameState={gameState} {...actions} />
-        <Set team={Team.team2} teamName={teamTwoName} gameState={gameState} {...actions} />
+        <Set
+          onlineTeam={onlineTeam}
+          team={Team.team1}
+          teamName={teamOneName}
+          gameState={gameState}
+          {...actions}
+        />
+        <Set
+          onlineTeam={onlineTeam}
+          team={Team.team2}
+          teamName={teamTwoName}
+          gameState={gameState}
+          {...actions}
+        />
       </div>
     </>
   )

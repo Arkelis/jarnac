@@ -13,7 +13,6 @@ export function useBag(gameId?: string) {
     },
   })
   const { mutate } = useUpdateBag({ gameId })
-  console.log("bag state", bag)
 
   const updateBag = useCallback(
     (newBag: Bag) => {
@@ -24,7 +23,6 @@ export function useBag(gameId?: string) {
   )
 
   const draw = useCallback(() => {
-    console.log("draw in", bag)
     const { newBag, letter } = takeALetter(bag)
     updateBag(newBag)
     return letter

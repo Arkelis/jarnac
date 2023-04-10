@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "db/client"
 import { Bag } from "models/bag"
 
@@ -32,6 +32,9 @@ interface UseUpdateBagParams {
 }
 
 export function useUpdateBag({ gameId }: UseUpdateBagParams) {
+  const queryClient = useQueryClient()
+  const queryKey = ["games", gameId, "bag"]
+
   return useMutation({
     mutationFn: async (bag: Bag) => {
       if (!gameId) return
@@ -45,6 +48,15 @@ export function useUpdateBag({ gameId }: UseUpdateBagParams) {
         .single()
       if (error) throw error
       return data.bag as Bag
+    },
+    onMutate: async (newBag) => {
+      await queryClient.cancelQueries({ queryKey })
+      const previousBag = queryClient.getQueryData(queryKey)
+      queryClient.setQueryData(queryKey, newBag)
+      return { previousBag }
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(queryKey, context?.previousBag)
     },
     retry: false,
   })
