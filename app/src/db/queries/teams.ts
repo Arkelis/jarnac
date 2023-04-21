@@ -56,7 +56,7 @@ export function useUpdateTeamNames({ teams: currentTeams, gameId }: UseUpdateTea
     onMutate: async (newTeams) => {
       await queryClient.cancelQueries({ queryKey })
       const previousTeams = queryClient.getQueryData(queryKey)
-      queryClient.setQueryData(queryKey, newTeams)
+      queryClient.setQueryData(queryKey, newTeams.teamNames)
       return { previousTeams }
     },
     onError: (_, __, context) => {

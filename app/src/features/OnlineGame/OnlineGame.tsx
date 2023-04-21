@@ -25,6 +25,8 @@ function OnlineGame({ gameId }: Props) {
     gameId,
   })
 
+  console.log(teams, isError, isLoading)
+
   // Can the game continue?
   const gameIsOngoing = useMemo(() => {
     const teams = users.map((user) => user.team)
