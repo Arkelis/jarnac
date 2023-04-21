@@ -8,10 +8,10 @@ import OnlineGamePage from "pages/OnlineGamePage"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 const router = createBrowserRouter([
-  { path: "/", element: <StartPage /> },
-  { path: "/local", element: <LocalGamePage /> },
-  { path: "/en-ligne/:gameId", element: <OnlineGamePage /> },
-  { path: "*", element: <Navigate to="/" /> },
+  { path: "/jarnac/", element: <StartPage /> },
+  { path: "/jarnac/local", element: <LocalGamePage /> },
+  { path: "/jarnac/en-ligne/:gameId", element: <OnlineGamePage /> },
+  { path: "*", element: <Navigate to="jarnac/" /> },
 ])
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)

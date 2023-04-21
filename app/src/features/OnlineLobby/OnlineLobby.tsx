@@ -25,7 +25,7 @@ function OnlineLobby({
   setName,
   onTeamNameChange,
 }: Props) {
-  const gameUrl = `http://localhost:3000/en-ligne/${gameId}`
+  const gameUrl = `${window.location.origin}/jarnac/en-ligne/${gameId}`
   const teamOneNameRef = useRef<HTMLInputElement>(null)
   const teamTwoNameRef = useRef<HTMLInputElement>(null)
   const { team1, team2 } = teamNames

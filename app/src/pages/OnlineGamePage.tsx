@@ -7,7 +7,7 @@ function OnlineGamePage() {
   const { data, isInitialLoading } = useFetchTeamNames({ gameId })
 
   if (isInitialLoading) return <p>Chargement en cours</p>
-  if (!data || !gameId) return <Navigate to="/" />
+  if (!data || !gameId) return <Navigate to="/jarnac/" />
 
   return <OnlineGame gameId={gameId} />
 }
