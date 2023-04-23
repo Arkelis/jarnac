@@ -5,7 +5,7 @@ import { GameActions } from "features/game/Game/useGameActions"
 import MakeAWord from "features/game/MakeAWord/MakeAWord"
 import SwapLettersSection from "features/game/SwapLetters/SwapLettersSection"
 import { computeScore, GameState } from "models/game"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { opponent, Team } from "types"
 import { useLineChoice } from "./useLineChoice"
 
@@ -36,6 +36,7 @@ function Set({
     useLineChoice()
   const [isMakingAWord, setIsMakingAWord] = useState(false)
   const [isMakingJarnac, setIsMakingJarnac] = useState(false)
+  const isMakingWordOrJarnac = isMakingAWord || isMakingJarnac
 
   const { pendingWord } = gameState
   const { possibleActions, initiated } = gameState[team]
@@ -56,6 +57,15 @@ function Set({
     setDefaultLineChoiceOrAsk(gameState[opponent(team)].board)
   }
 
+  useEffect(() => {
+    if (!ownsSet) return
+    if (!possibleActions.includes("jarnac")) return
+    if (isMakingJarnac) return
+    if (isMakingAWord) return
+    document.addEventListener("keydown", prepareJarnac)
+    return () => document.removeEventListener("keydown", prepareJarnac)
+  })
+
   return (
     <div>
       <p>Plateau de l&apos;équipe {teamName}</p>
@@ -73,19 +83,19 @@ function Set({
       </div>
       {ownsSet && possibleActions.length > 0 && <p>{"C'est à vous de jouer !"}</p>}
       {!ownsSet && possibleActions.length > 0 && <p>{"C'est à l'adversaire de jouer !"}</p>}
-      {ownsSet && possibleActions.includes("jarnac") && !isMakingAWord && (
+      {ownsSet && possibleActions.includes("jarnac") && !isMakingWordOrJarnac && (
         <button onClick={prepareJarnac}>JARNAC</button>
       )}
-      {ownsSet && possibleActions.includes("take") && !initiated && (
+      {ownsSet && possibleActions.includes("take") && !initiated && !isMakingWordOrJarnac && (
         <button onClick={init}>Tirer 6 lettres pour commencer</button>
       )}
-      {ownsSet && possibleActions.includes("take") && initiated && (
+      {ownsSet && possibleActions.includes("take") && initiated && !isMakingWordOrJarnac && (
         <button onClick={take}>Piocher une lettre</button>
       )}
-      {ownsSet && possibleActions.includes("proposeWord") && !isMakingAWord && (
+      {ownsSet && possibleActions.includes("proposeWord") && !isMakingWordOrJarnac && (
         <button onClick={prepareMakeAWord}>Fabriquer un nouveau mot</button>
       )}
-      {ownsSet && possibleActions.includes("pass") && !isMakingAWord && (
+      {ownsSet && possibleActions.includes("pass") && !isMakingWordOrJarnac && (
         <button onClick={pass}>Passer</button>
       )}
       <SwapLettersSection

@@ -16,6 +16,7 @@ function MakeAWord({ letters, line, onConfirm, onCancel }: Props) {
   const canConfirm = useMemo(() => {
     if (word.length < 3) return false
     if (word.length > 9) return false
+    if (word.length <= line.length) return false
     const wordCounter = countBy(word)
     const lineCounter = countBy(line)
     for (const letter in lineCounter) {

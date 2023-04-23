@@ -159,7 +159,7 @@ export function useGameActions({ firstTeam, gameId }: Params): { gameState: Game
     ) {
       return
     }
-    const timer = setTimeout(() => dispatch({ type: "jarnacTimeout" }), 1000)
+    const timer = setTimeout(() => dispatch({ type: "jarnacTimeout" }), 2000)
     return () => clearTimeout(timer)
   }, [dispatch, gameState])
 
