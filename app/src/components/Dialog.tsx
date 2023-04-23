@@ -13,7 +13,7 @@ function Dialog({ open, children }: Props) {
     return dialogRef.current.close()
   }, [open])
 
-  return <dialog ref={dialogRef}>{children}</dialog>
+  return <dialog ref={dialogRef}><div>{children}</div></dialog>
 }
 
 export default Dialog
