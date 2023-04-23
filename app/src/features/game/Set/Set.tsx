@@ -1,3 +1,4 @@
+import Letter from "components/Letter"
 import ApproveWord from "features/game/ApproveWord/ApproveWord"
 import Board from "features/game/Board/Board"
 import { GameActions } from "features/game/Game/useGameActions"
@@ -64,13 +65,14 @@ function Set({
         <p>Lettres</p>
         <p>
           {letters.map((letter, idx) => (
-            <button disabled key={idx}>
-              {letter}
-            </button>
+            <>
+              <Letter letter={letter} disabled key={idx} />{" "}
+            </>
           ))}
         </p>
       </div>
       {ownsSet && possibleActions.length > 0 && <p>{"C'est à vous de jouer !"}</p>}
+      {!ownsSet && possibleActions.length > 0 && <p>{"C'est à l'adversaire de jouer !"}</p>}
       {ownsSet && possibleActions.includes("jarnac") && !isMakingAWord && (
         <button onClick={prepareJarnac}>JARNAC</button>
       )}

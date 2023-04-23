@@ -1,3 +1,4 @@
+import Letter from "components/Letter"
 import { countBy } from "lodash"
 import { useCallback, useMemo, useState } from "react"
 
@@ -52,17 +53,17 @@ function MakeAWord({ letters, line, onConfirm, onCancel }: Props) {
       <label>Votre nouveau mot</label>
       <p>
         {word.map((letter, idx) => (
-          <button key={`${letter}${idx}`} onClick={removeFromWord(letter, idx)}>
-            {letter}
-          </button>
+          <>
+            <Letter letter={letter} key={`${letter}${idx}`} onClick={removeFromWord(letter, idx)} />{" "}
+          </>
         ))}
       </p>
       <label>Lettres disponibles</label>
       <p>
         {otherLetters.map((letter, idx) => (
-          <button key={`${letter}${idx}`} onClick={addToWord(letter, idx)}>
-            {letter}
-          </button>
+          <>
+            <Letter letter={letter} key={`${letter}${idx}`} onClick={addToWord(letter, idx)} />{" "}
+          </>
         ))}
       </p>
       <button disabled={!canConfirm} onClick={() => onConfirm(word, otherLetters)}>

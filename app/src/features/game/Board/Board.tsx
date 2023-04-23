@@ -12,7 +12,9 @@ function Board({ lines, lineMustBeChosen, onLineChoice }: Props) {
         .map((_, idx) => (
           <li key={idx}>
             {lineMustBeChosen && (
-              <button onClick={() => onLineChoice(idx)}>Sélectionner cette ligne</button>
+              <span className="mr-2 underline cursor-pointer" onClick={() => onLineChoice(idx)}>
+                Sélectionner
+              </span>
             )}
             {lines[idx]?.join("") || "_"}
           </li>

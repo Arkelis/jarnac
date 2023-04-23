@@ -18,7 +18,7 @@ function Game({ teamNames, firstTeam, gameId, onlineTeam }: Props) {
 
   return (
     <>
-      <div>
+      <div className="grid">
         <Set
           onlineTeam={onlineTeam}
           team={Team.team1}

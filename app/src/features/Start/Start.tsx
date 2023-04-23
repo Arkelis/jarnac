@@ -1,14 +1,16 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import CreateNewOnlineGame from "features/CreateNewOnlineGame/CreateNewOnlineGame"
+import JoinOnlineGame from "features/JoinOnlineGame/JoinOnlineGame"
 
 interface Props {
   localGamePath: string
-  onGameCreated: (id: string) => void
+  navigateToGame: (id: string) => void
 }
 
-function Start({ localGamePath, onGameCreated }: Props) {
+function Start({ localGamePath, navigateToGame }: Props) {
   const [isCreatingGame, setIsCreatingGame] = useState(false)
+  const [isJoiningGame, setIsJoiningGame] = useState(false)
 
   return (
     <ul>
@@ -22,11 +24,16 @@ function Start({ localGamePath, onGameCreated }: Props) {
         <CreateNewOnlineGame
           open={isCreatingGame}
           onCancel={() => setIsCreatingGame(false)}
-          onGameCreated={onGameCreated}
+          onGameCreated={navigateToGame}
         />
       </li>
       <li>
-        <button>Rejoindre une partie en ligne</button>
+        <button onClick={() => setIsJoiningGame(true)}>Rejoindre une partie en ligne</button>
+        <JoinOnlineGame
+          open={isJoiningGame}
+          onCancel={() => setIsJoiningGame(false)}
+          onGameJoined={navigateToGame}
+        />
       </li>
     </ul>
   )
