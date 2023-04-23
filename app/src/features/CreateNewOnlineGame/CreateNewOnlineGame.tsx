@@ -1,3 +1,4 @@
+import Dialog from "components/Dialog"
 import { useCreateGame } from "db/queries/game"
 import { useEffect, useRef } from "react"
 
@@ -7,18 +8,7 @@ interface Props {
   open: boolean
 }
 
-function useDialogManagement(open: boolean) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-  useEffect(() => {
-    if (dialogRef.current === null) return
-    if (open) return dialogRef.current.showModal()
-    return dialogRef.current.close()
-  }, [open])
-  return dialogRef
-}
-
 function CreateNewOnlineGame({ onGameCreated, onCancel, open }: Props) {
-  const dialogRef = useDialogManagement(open)
   const { mutate, reset, isLoading, isSuccess, isError } = useCreateGame({
     onSuccess: (id: string) => onGameCreated(id),
   })
@@ -29,7 +19,7 @@ function CreateNewOnlineGame({ onGameCreated, onCancel, open }: Props) {
   }, [open, mutate])
 
   return (
-    <dialog ref={dialogRef}>
+    <Dialog open={open}>
       <button
         onClick={() => {
           reset()
@@ -41,7 +31,7 @@ function CreateNewOnlineGame({ onGameCreated, onCancel, open }: Props) {
       {isError && <div>Une erreur est survenue.</div>}
       {isSuccess && <div>Vous allez entrer dans la partie !</div>}
       {isLoading && <div>Création de la partie en cours</div>}
-    </dialog>
+    </Dialog>
   )
 }
 
