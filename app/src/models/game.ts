@@ -3,7 +3,7 @@ import { Team } from "types"
 type Board = string[][]
 
 export type Action =
-  | { type: "sync"; newGameState: GameState }
+  | { type: "sync"; gameState: GameState }
   | { type: "proposeWord"; wordProposition: PendingWord }
   | { type: "proposeJarnac"; wordProposition: PendingWord }
   | { type: "refuseWord" }

@@ -4,7 +4,7 @@ export function randomInt(max: number) {
   return Math.floor(Math.random() * max)
 }
 
-export function initialBag() {
+export function initialBag(): Bag {
   return ([] as string[])
     .concat(Array(14).fill("A"))
     .concat(Array(4).fill("B"))
@@ -34,23 +34,32 @@ export function initialBag() {
     .concat(Array(2).fill("Z"))
 }
 
-export function takeALetter(bag: Bag) {
+function takeLetters(bag: Bag, n: number) {
   if (bag.length === 0) {
     throw new TypeError("Bag is empty")
   }
+
   const newBag = [...bag]
-  const letter = newBag.splice(randomInt(newBag.length), 1).at(0) as string
-  return { newBag, letter }
+  const newLetters = Array(n)
+    .fill(undefined)
+    .map(() => newBag.splice(randomInt(newBag.length), 1))
+    .flat()
+  return { newBag, newLetters }
+}
+
+export function takeALetter(bag: Bag) {
+  const { newBag, newLetters } = takeLetters(bag, 1)
+  return { newBag, letter: newLetters[0] }
+}
+
+export function takeSixLetters(bag: Bag) {
+  return takeLetters(bag, 6)
 }
 
 export function swapThreeLetters(bag: Bag, letters: string[]) {
   if (bag.length < 3) {
     throw new TypeError("Bag has less than 3 letters")
   }
-  const newBag = [...bag]
-  const newLetters = Array(3)
-    .fill(undefined)
-    .map(() => newBag.splice(randomInt(newBag.length), 1))
-    .flat()
+  const { newBag, newLetters } = takeLetters(bag, 3)
   return { newBag: [...newBag, ...letters], newLetters }
 }

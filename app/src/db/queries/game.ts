@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "db/client"
-import { initialBag } from "models/bag"
+import { Bag, initialBag } from "models/bag"
 import { GameState } from "models/game"
 
 interface UseCreateGameParams {
@@ -30,23 +30,28 @@ export function useCreateGame({ onSuccess }: UseCreateGameParams) {
   })
 }
 
+interface GamePayload {
+  gameState: GameState
+  bag: Bag
+}
+
 interface UseFetchGameParams {
   gameId?: string
-  onSuccess?: (game: GameState) => void
+  onSuccess?: (game: GamePayload) => void
 }
 
 export function useFetchGame({ gameId, onSuccess }: UseFetchGameParams) {
   return useQuery({
     queryKey: ["games", gameId, "game"],
-    queryFn: async () => {
+    queryFn: async (): Promise<GamePayload> => {
       const { data, error } = await supabase
         .from("games")
-        .select("game_state")
+        .select("game_state, bag")
         .eq("id", gameId)
         .limit(1)
         .single()
       if (error) throw error
-      return data.game_state as GameState
+      return { gameState: data.game_state, bag: data.bag }
     },
     enabled: Boolean(gameId),
     retry: false,
@@ -58,23 +63,37 @@ interface UseUpdateGameParams {
   gameId?: string
 }
 
+interface GameUpdatePayload {
+  gameState: GameState
+  bag?: Bag
+}
+
+interface GameUpdateRequestBody {
+  game_state: GameState
+  bag?: Bag
+}
+
 export function useUpdateGame({ gameId }: UseUpdateGameParams) {
   const queryClient = useQueryClient()
   const queryKey = ["games", gameId, "game"]
 
   return useMutation({
-    mutationFn: async (game: GameState) => {
+    mutationFn: async (game: GameUpdatePayload) => {
       if (!gameId) return
+
+      const updatePayload = { game_state: game.gameState } as GameUpdateRequestBody
+      if (game.bag !== undefined) updatePayload["bag"] = game.bag
+
       const { data, error } = await supabase
         .from("games")
-        .update({ game_state: game })
+        .update(updatePayload)
         .eq("id", gameId)
-        .select("game_state")
+        .select("game_state, bag")
         .order("id")
         .limit(1)
         .single()
       if (error) throw error
-      return data.game_state as GameState
+      return { gameState: data.game_state, bag: data.bag }
     },
     onMutate: async (gameState) => {
       await queryClient.cancelQueries({ queryKey })

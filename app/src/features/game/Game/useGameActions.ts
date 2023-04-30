@@ -1,5 +1,6 @@
 import { useFetchGame, useUpdateGame } from "db/queries/game"
 import { useBag } from "features/useBag"
+import { Bag } from "models/bag"
 import { Action, GameState, initialGame, isConsonant, PendingWord } from "models/game"
 import { useCallback, useEffect, useReducer } from "react"
 import { opponent, Team } from "types"
@@ -11,7 +12,7 @@ function gameReducer(currentGameState: GameState, action: Action) {
 
   switch (action.type) {
     case "sync":
-      return action.newGameState
+      return action.gameState
 
     case "changeTurn":
       gameState.currentTeam = opponentTeam
@@ -126,31 +127,36 @@ export interface GameActions {
 }
 
 export function useGameActions({ firstTeam, gameId }: Params): { gameState: GameState } & GameActions {
-  const { bag, draw, discard, swapThree } = useBag(gameId)
+  const { bag, draw, drawSix, discard, swapThree } = useBag(gameId)
   const [gameState, _dispatch] = useReducer(gameReducer, { firstTeam }, initialGame)
 
   // online synchronization
   const { mutate } = useUpdateGame({ gameId })
   const dispatch = useCallback(
-    (action: Action) => {
+    (action: Action, newBag?: Bag) => {
       _dispatch(action)
-      mutate(gameReducer(gameState, action))
+      mutate({ gameState: gameReducer(gameState, action), bag: newBag })
     },
     [mutate, gameState]
   )
   useFetchGame({
     gameId,
-    onSuccess: (newGameState) => _dispatch({ type: "sync", newGameState }),
+    onSuccess: ({ gameState }) => _dispatch({ type: "sync", gameState }),
   })
 
   const init = useCallback(() => {
-    const letters = Array(6).fill(undefined).map(draw)
-    while (letters.every((letter) => isConsonant(letter))) {
-      discard(letters.pop())
-      letters.push(draw())
+    const { newBag, newLetters } = drawSix()
+    while (newLetters.every((letter) => isConsonant(letter))) {
+      const letterToRemove = newLetters.pop() as string
+      discard(letterToRemove)
+      newBag.push(letterToRemove)
+
+      const { letter } = draw()
+      newBag.splice(newBag.indexOf(letter), 1)
+      newLetters.push(letter)
     }
-    dispatch({ type: "init", letters })
-  }, [discard, dispatch, draw])
+    dispatch({ type: "init", letters: newLetters }, newBag)
+  }, [discard, dispatch, draw, drawSix])
 
   useEffect(() => {
     if (
@@ -167,8 +173,8 @@ export function useGameActions({ firstTeam, gameId }: Params): { gameState: Game
     if (bag.length < 1) {
       return "error"
     }
-    const letter = draw()
-    dispatch({ type: "take", letter })
+    const { newBag, letter } = draw()
+    dispatch({ type: "take", letter }, newBag)
     return "ok"
   }, [bag.length, dispatch, draw])
 
@@ -177,8 +183,8 @@ export function useGameActions({ firstTeam, gameId }: Params): { gameState: Game
       if (bag.length < 3) {
         return "error"
       }
-      const newLetters = swapThree(lettersToRemove)
-      dispatch({ type: "swap", lettersToRemove, newLetters })
+      const { newBag, newLetters } = swapThree(lettersToRemove)
+      dispatch({ type: "swap", lettersToRemove, newLetters }, newBag)
       return "ok"
     },
     [bag.length, dispatch, swapThree]

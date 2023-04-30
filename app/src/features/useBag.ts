@@ -1,50 +1,45 @@
-import { useFetchBag, useUpdateBag } from "db/queries/bag"
-import { Bag, initialBag, swapThreeLetters, takeALetter } from "models/bag"
+import { useFetchGame } from "db/queries/game"
+import { initialBag, swapThreeLetters, takeALetter, takeSixLetters } from "models/bag"
 import { useCallback, useState } from "react"
 
 export function useBag(gameId?: string) {
   const [bag, setBag] = useState(gameId ? [] : initialBag())
 
-  // online synchronization
-  useFetchBag({
+  useFetchGame({
     gameId,
-    onSuccess: (fetchedBag) => {
-      setBag(fetchedBag)
-    },
+    onSuccess: ({ bag }) => setBag(bag),
   })
-  const { mutate } = useUpdateBag({ gameId })
 
-  const updateBag = useCallback(
-    (newBag: Bag) => {
-      setBag(newBag)
-      mutate(newBag)
-    },
-    [setBag, mutate]
-  )
+  const drawSix = useCallback(() => {
+    const { newBag, newLetters } = takeSixLetters(bag)
+    setBag(newBag)
+    return { newBag, newLetters }
+  }, [bag, setBag])
 
   const draw = useCallback(() => {
     const { newBag, letter } = takeALetter(bag)
-    updateBag(newBag)
-    return letter
-  }, [bag, updateBag])
+    setBag(newBag)
+    return { letter, newBag }
+  }, [bag, setBag])
 
   const swapThree = useCallback(
     (letters: string[]) => {
       const { newBag, newLetters } = swapThreeLetters(bag, letters)
-      updateBag(newBag)
-      return newLetters
+      setBag(newBag)
+      return { newBag, newLetters }
     },
-    [bag, updateBag]
+    [bag, setBag]
   )
 
   const discard = useCallback(
     (letter?: string) => {
       const newBag = letter ? [...bag, letter] : bag
-      updateBag(newBag)
+      setBag(newBag)
+      return { newBag }
     },
-    [bag, updateBag]
+    [bag, setBag]
   )
-  const reset = useCallback(() => updateBag(initialBag()), [updateBag])
+  const reset = useCallback(() => setBag(initialBag()), [setBag])
 
-  return { bag, draw, discard, swapThree, reset }
+  return { bag, draw, drawSix, discard, swapThree, reset }
 }
