@@ -60,8 +60,7 @@ function Set({
   useEffect(() => {
     if (!ownsSet) return
     if (!possibleActions.includes("jarnac")) return
-    if (isMakingJarnac) return
-    if (isMakingAWord) return
+    if (isMakingWordOrJarnac) return
     document.addEventListener("keydown", prepareJarnac)
     return () => document.removeEventListener("keydown", prepareJarnac)
   })
